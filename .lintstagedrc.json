@@ -1,8 +1,4 @@
 {
-  "*.{ts,tsx,js,jsx,json,jsonc}": [
-    "biome check --write --no-errors-on-unmatched"
-  ],
-  "*.md": [
-    "biome format --write --no-errors-on-unmatched"
-  ]
+  "*.{ts,tsx,js,jsx,json,jsonc}": ["biome check --write --no-errors-on-unmatched"],
+  "*.md": ["biome format --write --no-errors-on-unmatched"]
 }

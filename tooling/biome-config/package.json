@@ -5,9 +5,7 @@
   "description": "Shared Biome configuration for PromptLint packages.",
   "license": "MIT",
   "type": "module",
-  "files": [
-    "biome.json"
-  ],
+  "files": ["biome.json"],
   "scripts": {
     "lint": "echo \"no-op\"",
     "lint:fix": "echo \"no-op\"",

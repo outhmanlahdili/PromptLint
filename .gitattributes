@@ -1,0 +1,15 @@
+# Treat all source files as text and force LF on commit/checkout,
+# regardless of the user's global core.autocrlf setting.
+* text=auto eol=lf
+
+# Explicitly mark binary files so they are never touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary

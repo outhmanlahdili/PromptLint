@@ -5,11 +5,7 @@
   "description": "Shared TypeScript configurations for PromptLint packages.",
   "license": "MIT",
   "type": "module",
-  "files": [
-    "base.json",
-    "build.json",
-    "test.json"
-  ],
+  "files": ["base.json", "build.json", "test.json"],
   "scripts": {
     "lint": "echo \"no-op\"",
     "typecheck": "echo \"no-op\"",

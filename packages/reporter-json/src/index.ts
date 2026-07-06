@@ -1,4 +1,4 @@
-import type { Finding } from "@promptlint/types";
+import type { Finding } from "@promptlint/types"
 
 /**
  * Stable, versioned JSON output. The JSON shape is part of the V1
@@ -7,9 +7,9 @@ import type { Finding } from "@promptlint/types";
  * non-breaking changes.
  */
 export interface JsonReporterPayload {
-  readonly schemaVersion: 1;
-  readonly generatedAt: string;
-  readonly findings: ReadonlyArray<Finding>;
+  readonly schemaVersion: 1
+  readonly generatedAt: string
+  readonly findings: ReadonlyArray<Finding>
 }
 
 /**
@@ -24,7 +24,7 @@ export function toJsonPayload(
     schemaVersion: 1,
     generatedAt: generatedAt.toISOString(),
     findings,
-  });
+  })
 }
 
 /**
@@ -33,7 +33,7 @@ export function toJsonPayload(
  * already-immutable. The serializer adds no whitespace.
  */
 export function serializeJson(payload: JsonReporterPayload): string {
-  return JSON.stringify(payload);
+  return JSON.stringify(payload)
 }
 
-export { JsonReporterPayload, toJsonPayload, serializeJson };
+export { type JsonReporterPayload, toJsonPayload, serializeJson }

@@ -8,7 +8,7 @@
  * - `warning`: likely problem worth reviewing; does not fail a build by default.
  * - `error`:   definite problem; fails a build unless explicitly suppressed.
  */
-export type Severity = "info" | "warning" | "error";
+export type Severity = "info" | "warning" | "error"
 
 /**
  * Numeric weight for each severity. Higher = more severe.
@@ -16,20 +16,18 @@ export type Severity = "info" | "warning" | "error";
  * @example
  * const max = Math.max(...findings.map((f) => SEVERITY_WEIGHT[f.severity]));
  */
-export const SEVERITY_WEIGHT: Readonly<Record<Severity, number>> = Object.freeze(
-  {
-    info: 0,
-    warning: 1,
-    error: 2,
-  },
-);
+export const SEVERITY_WEIGHT: Readonly<Record<Severity, number>> = Object.freeze({
+  info: 0,
+  warning: 1,
+  error: 2,
+})
 
 /**
  * Supported prompt file formats. V1 handles the three formats documented in
  * the PRD; additional formats are added in V2 without breaking changes to
  * this enum.
  */
-export type PromptFormat = "prompt.md" | "prompt.ts" | "prompt.json";
+export type PromptFormat = "prompt.md" | "prompt.ts" | "prompt.json"
 
 /**
  * A variable referenced inside a prompt body, as inferred by the parser.
@@ -39,8 +37,8 @@ export type PromptFormat = "prompt.md" | "prompt.ts" | "prompt.json";
  * line/column form for editor integration.
  */
 export interface PromptVariable {
-  readonly name: string;
-  readonly locations: ReadonlyArray<SourceLocation>;
+  readonly name: string
+  readonly locations: ReadonlyArray<SourceLocation>
 }
 
 /**
@@ -48,10 +46,10 @@ export interface PromptVariable {
  * start side and exclusive on the end side, matching LSP conventions.
  */
 export interface SourceLocation {
-  readonly line: 1 | number;
-  readonly column: 1 | number;
-  readonly endLine: number;
-  readonly endColumn: number;
+  readonly line: 1 | number
+  readonly column: 1 | number
+  readonly endLine: number
+  readonly endColumn: number
 }
 
 /**
@@ -60,12 +58,12 @@ export interface SourceLocation {
  * because V1 rules do not assume a specific frontmatter shape.
  */
 export interface PromptFrontmatter {
-  readonly description?: string;
-  readonly model?: string;
-  readonly variables?: ReadonlyArray<string>;
-  readonly outputSchema?: Readonly<Record<string, unknown>>;
+  readonly description?: string
+  readonly model?: string
+  readonly variables?: ReadonlyArray<string>
+  readonly outputSchema?: Readonly<Record<string, unknown>>
   /** Catch-all for known-in-V2 keys. The core engine never inspects these. */
-  readonly extra?: Readonly<Record<string, unknown>>;
+  readonly extra?: Readonly<Record<string, unknown>>
 }
 
 /**
@@ -76,16 +74,16 @@ export interface PromptFrontmatter {
  */
 export interface PromptFile {
   /** Stable identifier derived from `path`; suitable for use as a cache key. */
-  readonly id: string;
+  readonly id: string
   /** Repository-relative path, using forward slashes. */
-  readonly path: string;
-  readonly format: PromptFormat;
+  readonly path: string
+  readonly format: PromptFormat
   /** Raw body of the prompt as the user would send to a model. */
-  readonly body: string;
-  readonly frontmatter: PromptFrontmatter;
-  readonly variables: ReadonlyArray<PromptVariable>;
+  readonly body: string
+  readonly frontmatter: PromptFrontmatter
+  readonly variables: ReadonlyArray<PromptVariable>
   /** SHA-256 of normalized content, used for caching in later phases. */
-  readonly contentHash: string;
+  readonly contentHash: string
 }
 
 /**
@@ -97,13 +95,13 @@ export interface PromptFile {
  * - `suggestions` are actionable, optional, and ordered by expected impact.
  */
 export interface Finding {
-  readonly ruleId: string;
-  readonly fileId: string;
-  readonly filePath: string;
-  readonly severity: Severity;
-  readonly message: string;
-  readonly location?: SourceLocation;
-  readonly suggestions?: ReadonlyArray<string>;
+  readonly ruleId: string
+  readonly fileId: string
+  readonly filePath: string
+  readonly severity: Severity
+  readonly message: string
+  readonly location?: SourceLocation
+  readonly suggestions?: ReadonlyArray<string>
 }
 
 /**
@@ -114,7 +112,7 @@ export interface Finding {
  * engine can budget concurrency uniformly.
  */
 export interface RuleResult {
-  readonly findings: ReadonlyArray<Finding>;
+  readonly findings: ReadonlyArray<Finding>
 }
 
 /**
@@ -126,11 +124,11 @@ export interface RuleResult {
  */
 export interface RuleContext {
   /** Parsed prompt file under inspection. */
-  readonly file: PromptFile;
+  readonly file: PromptFile
   /** Rule options as resolved from configuration. */
-  readonly options: Readonly<Record<string, unknown>>;
+  readonly options: Readonly<Record<string, unknown>>
   /** Sink for emitting findings. */
-  readonly report: (finding: Omit<Finding, "ruleId" | "fileId" | "filePath">) => void;
+  readonly report: (finding: Omit<Finding, "ruleId" | "fileId" | "filePath">) => void
 }
 
 /**
@@ -143,32 +141,32 @@ export interface RuleContext {
  */
 export interface RuleDefinition<TOptions = unknown> {
   /** Stable, namespaced id, e.g. `"quality/missing-output-schema"`. */
-  readonly id: string;
+  readonly id: string
   /** Human-readable description shown in documentation and `--help`. */
-  readonly description: string;
+  readonly description: string
   /** Severity applied when the rule fires without explicit overrides. */
-  readonly defaultSeverity: Severity;
+  readonly defaultSeverity: Severity
   /** Optional, ordered list of every public option the rule reads. */
-  readonly options?: ReadonlyArray<RuleOption>;
+  readonly options?: ReadonlyArray<RuleOption>
   /**
    * Rule implementation. Returns a finding list. Errors thrown here are
    * surfaced by the engine as a single `error` finding with the rule id;
    * the rule name is included to give the developer a starting point.
    */
-  readonly check: (context: RuleContext) => RuleResult | Promise<RuleResult>;
+  readonly check: (context: RuleContext) => RuleResult | Promise<RuleResult>
   /**
    * Optional JSON-Schema-like description of option shapes. Phase 0 reserves
    * the field; Phase 1 ships the validator.
    */
-  readonly schema?: Readonly<Record<string, unknown>>;
+  readonly schema?: Readonly<Record<string, unknown>>
 }
 
 /** A single tunable option exposed by a rule. */
 export interface RuleOption {
-  readonly name: string;
-  readonly type: "string" | "number" | "boolean" | "string[]";
-  readonly default: string | number | boolean | ReadonlyArray<string>;
-  readonly description: string;
+  readonly name: string
+  readonly type: "string" | "number" | "boolean" | "string[]"
+  readonly default: string | number | boolean | ReadonlyArray<string>
+  readonly description: string
 }
 
 /**
@@ -177,6 +175,18 @@ export interface RuleOption {
  * Re-exports the foundational type model. Downstream packages import from
  * here so that the type shape has exactly one definition.
  */
-export type { Severity, PromptFormat, SourceLocation, PromptVariable, PromptFrontmatter, PromptFile, Finding, RuleContext, RuleResult, RuleDefinition, RuleOption };
+export type {
+  Severity,
+  PromptFormat,
+  SourceLocation,
+  PromptVariable,
+  PromptFrontmatter,
+  PromptFile,
+  Finding,
+  RuleContext,
+  RuleResult,
+  RuleDefinition,
+  RuleOption,
+}
 
-export { SEVERITY_WEIGHT };
+export { SEVERITY_WEIGHT }

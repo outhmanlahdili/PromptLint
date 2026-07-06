@@ -5,9 +5,7 @@
   "description": "Shared Vite/Vitest configuration preset for PromptLint packages.",
   "license": "MIT",
   "type": "module",
-  "files": [
-    "vitest.config.ts"
-  ],
+  "files": ["vitest.config.ts"],
   "exports": {
     "./vitest": "./vitest.config.ts",
     "./vitest.config": "./vitest.config.ts"

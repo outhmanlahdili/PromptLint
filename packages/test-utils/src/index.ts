@@ -1,10 +1,5 @@
-import { createHash } from "node:crypto";
-import type {
-  PromptFile,
-  PromptFormat,
-  PromptFrontmatter,
-  SourceLocation,
-} from "@promptlint/types";
+import { createHash } from "node:crypto"
+import type { PromptFile, PromptFormat, PromptFrontmatter, SourceLocation } from "@promptlint/types"
 
 /**
  * Build a deterministic `PromptFile` for tests. The `contentHash` is
@@ -16,22 +11,22 @@ import type {
  * required fields) require a single update here.
  */
 export interface MakePromptFileInput {
-  readonly path: string;
-  readonly format: PromptFormat;
-  readonly body: string;
-  readonly frontmatter?: PromptFrontmatter;
-  readonly variables?: ReadonlyArray<{ name: string; locations?: ReadonlyArray<SourceLocation> }>;
+  readonly path: string
+  readonly format: PromptFormat
+  readonly body: string
+  readonly frontmatter?: PromptFrontmatter
+  readonly variables?: ReadonlyArray<{ name: string; locations?: ReadonlyArray<SourceLocation> }>
 }
 
 export function makePromptFile(input: MakePromptFileInput): PromptFile {
-  const normalizedPath = input.path.replaceAll("\\", "/");
+  const normalizedPath = input.path.replaceAll("\\", "/")
   const variables = (input.variables ?? []).map((v) => ({
     name: v.name,
     locations: v.locations ?? [],
-  }));
+  }))
   const contentHash = createHash("sha256")
     .update(`${normalizedPath}\u0000${input.format}\u0000${input.body}`)
-    .digest("hex");
+    .digest("hex")
   return Object.freeze({
     id: normalizedPath,
     path: normalizedPath,
@@ -40,7 +35,7 @@ export function makePromptFile(input: MakePromptFileInput): PromptFile {
     frontmatter: Object.freeze({ ...(input.frontmatter ?? {}) }),
     variables: Object.freeze(variables),
     contentHash,
-  });
+  })
 }
 
-export { makePromptFile };
+export { makePromptFile }

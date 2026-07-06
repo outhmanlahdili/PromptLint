@@ -1,19 +1,10 @@
-import type {
-  RuleDefinition,
-  RuleOption,
-  Severity,
-} from "@promptlint/types";
+import type { RuleDefinition, RuleOption, Severity } from "@promptlint/types"
 
 /**
  * Categories of V1 rules. Used by reporters to group findings and by
  * the docs generator to filter rules per category page.
  */
-export type RuleCategory =
-  | "structure"
-  | "cost"
-  | "security"
-  | "quality"
-  | "convention";
+export type RuleCategory = "structure" | "cost" | "security" | "quality" | "convention"
 
 /**
  * Metadata-only descriptor for a rule, exported before implementation.
@@ -22,12 +13,12 @@ export type RuleCategory =
  * re-export the same shape via `@promptlint/types`'s `RuleDefinition`.
  */
 export interface RuleManifestEntry {
-  readonly id: string;
-  readonly category: RuleCategory;
-  readonly description: string;
-  readonly severity: Severity;
-  readonly autoFixable: boolean;
-  readonly options: ReadonlyArray<RuleOption>;
+  readonly id: string
+  readonly category: RuleCategory
+  readonly description: string
+  readonly severity: Severity
+  readonly autoFixable: boolean
+  readonly options: ReadonlyArray<RuleOption>
 }
 
 /**
@@ -127,14 +118,14 @@ export const RULES_MANIFEST: ReadonlyArray<RuleManifestEntry> = Object.freeze([
     autoFixable: false,
     options: [],
   },
-]);
+])
 
 /**
  * Look up a manifest entry by id. Phase 2 returns the implemented rule
  * from this lookup; tests in Phase 0 verify the catalog content is stable.
  */
 export function findManifestEntry(id: string): RuleManifestEntry | undefined {
-  return RULES_MANIFEST.find((r) => r.id === id);
+  return RULES_MANIFEST.find((r) => r.id === id)
 }
 
 /**
@@ -144,8 +135,8 @@ export function findManifestEntry(id: string): RuleManifestEntry | undefined {
  * branching on phase availability.
  */
 export function definedRuleIds(): ReadonlyArray<string> {
-  return RULES_MANIFEST.map((r) => r.id);
+  return RULES_MANIFEST.map((r) => r.id)
 }
 
-export type { RuleDefinition, RuleOption, Severity };
-export { RULES_MANIFEST, findManifestEntry, definedRuleIds };
+export type { RuleDefinition, RuleOption, Severity }
+export { RULES_MANIFEST, findManifestEntry, definedRuleIds }

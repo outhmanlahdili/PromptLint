@@ -5,4 +5,4 @@
  * renderer to the rule manifest and rule-option schemas published
  * by `@promptlint/types` and `@promptlint/rules`.
  */
-export {};
+export {}

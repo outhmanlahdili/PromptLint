@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod"
 
 /**
  * Schema for the V1 `.promptlintrc.json` configuration file.
@@ -31,15 +31,15 @@ export const promptlintConfigSchema = z
     /** Reporter to use when none is specified on the CLI. */
     reporter: z.enum(["human", "json"]).optional(),
   })
-  .strict();
+  .strict()
 
 /** Validated, fully resolved configuration shape used at runtime. */
-export type PromptlintConfig = z.infer<typeof promptlintConfigSchema>;
+export type PromptlintConfig = z.infer<typeof promptlintConfigSchema>
 
 /** Default configuration, applied when no `.promptlintrc.json` exists. */
 export const DEFAULT_CONFIG: PromptlintConfig = Object.freeze({
   reporter: "human",
-});
+})
 
 /**
  * Public surface of `@promptlint/config`.
@@ -47,6 +47,6 @@ export const DEFAULT_CONFIG: PromptlintConfig = Object.freeze({
  * Implements the loader in Phase 1. Phase 0 ships the schema and the
  * default config so the rest of the workspace can import them.
  */
-export { promptlintConfigSchema };
-export type { PromptlintConfig };
-export { DEFAULT_CONFIG };
+export { promptlintConfigSchema }
+export type { PromptlintConfig }
+export { DEFAULT_CONFIG }

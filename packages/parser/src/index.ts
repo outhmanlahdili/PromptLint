@@ -1,8 +1,4 @@
-import type {
-  PromptFile,
-  PromptFormat,
-  SourceLocation,
-} from "@promptlint/types";
+import type { PromptFile, PromptFormat, SourceLocation } from "@promptlint/types"
 
 /**
  * Raw input handed to a parser.
@@ -14,10 +10,10 @@ import type {
  */
 export interface RawPromptInput {
   /** Repository-relative forward-slash path, e.g. `prompts/summarize.prompt.md`. */
-  readonly path: string;
-  readonly format: PromptFormat;
+  readonly path: string
+  readonly format: PromptFormat
   /** File contents decoded as UTF-8. */
-  readonly source: string;
+  readonly source: string
 }
 
 /**
@@ -26,14 +22,14 @@ export interface RawPromptInput {
  * of the rules continue to receive the file as context.
  */
 export interface ParseResult {
-  readonly file: PromptFile;
+  readonly file: PromptFile
   /** Non-fatal parse issues, surfaced as findings by the engine. */
-  readonly errors: ReadonlyArray<ParseError>;
+  readonly errors: ReadonlyArray<ParseError>
 }
 
 export interface ParseError {
-  readonly message: string;
-  readonly location?: SourceLocation;
+  readonly message: string
+  readonly location?: SourceLocation
 }
 
 /**
@@ -41,8 +37,8 @@ export interface ParseError {
  * dispatches based on `format`.
  */
 export interface PromptParser {
-  readonly format: PromptFormat;
-  parse(input: RawPromptInput): ParseResult | Promise<ParseResult>;
+  readonly format: PromptFormat
+  parse(input: RawPromptInput): ParseResult | Promise<ParseResult>
 }
 
 /**
@@ -50,8 +46,8 @@ export interface PromptParser {
  * off the same id so tests can rely on determinism.
  */
 export function derivePromptId(path: string): string {
-  return path.replaceAll("\\", "/");
+  return path.replaceAll("\\", "/")
 }
 
-export { derivePromptId };
-export type { RawPromptInput, ParseResult, ParseError, PromptParser };
+export { derivePromptId }
+export type { RawPromptInput, ParseResult, ParseError, PromptParser }

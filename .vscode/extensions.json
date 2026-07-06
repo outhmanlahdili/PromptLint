@@ -1,7 +1,5 @@
 {
   "name": "vscode",
   "displayName": "Visual Studio Code",
-  "recommendations": [
-    "biomejs.biome"
-  ]
+  "recommendations": ["biomejs.biome"]
 }

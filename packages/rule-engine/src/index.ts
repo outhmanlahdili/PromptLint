@@ -5,7 +5,7 @@ import type {
   RuleDefinition,
   RuleOption,
   Severity,
-} from "@promptlint/types";
+} from "@promptlint/types"
 
 /**
  * Resolved runner options. Defaults match the V1 success criteria
@@ -14,23 +14,23 @@ import type {
  */
 export interface EngineOptions {
   /** Maximum number of files processed in parallel. Defaults to CPU count. */
-  readonly concurrency?: number;
+  readonly concurrency?: number
   /**
    * Severity threshold. Findings above this severity cause a non-zero
    * exit code. `warning` & `error` are reported as failures by default;
    * `info` is always advisory.
    */
-  readonly failOn?: Severity;
+  readonly failOn?: Severity
   /**
    * Rule definitions registered for engine invocation. The host (CLI or
    * test) supplies these explicitly in V1; the loader that reads them
    * from `@promptlint/rules` lands in Phase 1.
    */
-  readonly rules: ReadonlyArray<RuleDefinition>;
+  readonly rules: ReadonlyArray<RuleDefinition>
   /** Map from rule id to severity override or `off` to disable. */
-  readonly ruleSeverity?: Readonly<Record<string, Severity | "off">>;
+  readonly ruleSeverity?: Readonly<Record<string, Severity | "off">>
   /** Map from rule id to per-rule options merged into the rule context. */
-  readonly ruleOptions?: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
+  readonly ruleOptions?: Readonly<Record<string, Readonly<Record<string, unknown>>>>
 }
 
 /**
@@ -38,17 +38,17 @@ export interface EngineOptions {
  * this directly to the JSON reporter and the human reporter summarizes it.
  */
 export interface EngineResult {
-  readonly files: ReadonlyArray<PromptFile>;
-  readonly findings: ReadonlyArray<Finding>;
-  readonly stats: EngineStats;
+  readonly files: ReadonlyArray<PromptFile>
+  readonly findings: ReadonlyArray<Finding>
+  readonly stats: EngineStats
 }
 
 export interface EngineStats {
-  readonly fileCount: number;
-  readonly ruleCount: number;
-  readonly durationMs: number;
+  readonly fileCount: number
+  readonly ruleCount: number
+  readonly durationMs: number
   /** Severity tally; mirrors the keys of datum `SEVERITY_WEIGHT`. */
-  readonly bySeverity: Readonly<Record<Severity, number>>;
+  readonly bySeverity: Readonly<Record<Severity, number>>
 }
 
 /**
@@ -60,10 +60,10 @@ export function resolveSeverity(
   rule: RuleDefinition,
   ruleSeverity: Readonly<Record<string, Severity | "off">> | undefined,
 ): Severity | null {
-  const override = ruleSeverity?.[rule.id];
-  if (override === "off") return null;
-  if (override) return override;
-  return rule.defaultSeverity;
+  const override = ruleSeverity?.[rule.id]
+  if (override === "off") return null
+  if (override) return override
+  return rule.defaultSeverity
 }
 
 /**
@@ -72,7 +72,7 @@ export function resolveSeverity(
  * the documented surface.
  */
 export function declaredOptions(rule: RuleDefinition): ReadonlyArray<RuleOption> {
-  return rule.options ?? [];
+  return rule.options ?? []
 }
 
 /**
@@ -80,12 +80,12 @@ export function declaredOptions(rule: RuleDefinition): ReadonlyArray<RuleOption>
  * async dispatcher that drains files through `Promise.all`-bounded
  * parallelism and merges findings.
  */
-export type { EngineOptions, EngineResult, EngineStats };
-export { resolveSeverity, declaredOptions };
+export type { EngineOptions, EngineResult, EngineStats }
+export { resolveSeverity, declaredOptions }
 
 /**
  * Forward-declared type to satisfy `@promptlint/types` round-trips for
  * downstream packages that need the context type from a single import
  * site. The alias is fully type-safe and incurs no runtime cost.
  */
-export type { RuleContext };
+export type { RuleContext }
