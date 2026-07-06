@@ -15,7 +15,7 @@ export interface MakePromptFileInput {
   readonly format: PromptFormat
   readonly body: string
   readonly frontmatter?: PromptFrontmatter
-  readonly variables?: ReadonlyArray<{ name: string; locations?: ReadonlyArray<SourceLocation> }>
+  readonly variables?: ReadonlyArray<{ name: string; locations?: readonly SourceLocation[] }>
 }
 
 export function makePromptFile(input: MakePromptFileInput): PromptFile {
@@ -37,5 +37,3 @@ export function makePromptFile(input: MakePromptFileInput): PromptFile {
     contentHash,
   })
 }
-
-export { makePromptFile }

@@ -5,7 +5,7 @@ import type { Finding, Severity } from "@promptlint/types"
  * rendering; Phase 0 ships the shape that the renderer will consume.
  */
 export interface HumanReporterInput {
-  readonly findings: ReadonlyArray<Finding>
+  readonly findings: readonly Finding[]
   /** Optional override for the terminal width. `process.stdout.columns` is used otherwise. */
   readonly width?: number
   /** Set to `true` to disable ANSI escape codes (used in tests & non-TTY environments). */
@@ -63,6 +63,3 @@ export function formatFindingLine(finding: Finding, noColor: boolean, width: num
   void width
   return `${head}\n${body}\n${message}`
 }
-
-export { formatFindingLine, formatFindingsForHuman }
-export type { HumanReporterInput, SeverityGlyph }

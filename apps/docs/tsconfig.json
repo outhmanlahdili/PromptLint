@@ -1,9 +1,10 @@
 {
   "extends": "@promptlint/tsconfig/base.json",
-  "compilerOptions": {
-    "rootDir": "..",
-    "types": ["node"]
-  },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["dist", "node_modules", "coverage", ".astro", ".next"]
+  "exclude": ["dist", "node_modules", "coverage", ".astro", ".next"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": ["node"],
+    "allowImportingTsExtensions": true
+  }
 }

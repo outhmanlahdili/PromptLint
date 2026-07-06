@@ -26,7 +26,7 @@ export interface EngineOptions {
    * test) supplies these explicitly in V1; the loader that reads them
    * from `@promptlint/rules` lands in Phase 1.
    */
-  readonly rules: ReadonlyArray<RuleDefinition>
+  readonly rules: readonly RuleDefinition[]
   /** Map from rule id to severity override or `off` to disable. */
   readonly ruleSeverity?: Readonly<Record<string, Severity | "off">>
   /** Map from rule id to per-rule options merged into the rule context. */
@@ -38,8 +38,8 @@ export interface EngineOptions {
  * this directly to the JSON reporter and the human reporter summarizes it.
  */
 export interface EngineResult {
-  readonly files: ReadonlyArray<PromptFile>
-  readonly findings: ReadonlyArray<Finding>
+  readonly files: readonly PromptFile[]
+  readonly findings: readonly Finding[]
   readonly stats: EngineStats
 }
 
@@ -71,21 +71,8 @@ export function resolveSeverity(
  * declared default. Phase 1 tests use this to assert that defaults match
  * the documented surface.
  */
-export function declaredOptions(rule: RuleDefinition): ReadonlyArray<RuleOption> {
+export function declaredOptions(rule: RuleDefinition): readonly RuleOption[] {
   return rule.options ?? []
 }
 
-/**
- * Public surface for `@promptlint/rule-engine`. Phase 1 implements the
- * async dispatcher that drains files through `Promise.all`-bounded
- * parallelism and merges findings.
- */
-export type { EngineOptions, EngineResult, EngineStats }
-export { resolveSeverity, declaredOptions }
-
-/**
- * Forward-declared type to satisfy `@promptlint/types` round-trips for
- * downstream packages that need the context type from a single import
- * site. The alias is fully type-safe and incurs no runtime cost.
- */
 export type { RuleContext }

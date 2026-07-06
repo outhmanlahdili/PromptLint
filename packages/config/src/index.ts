@@ -47,6 +47,3 @@ export const DEFAULT_CONFIG: PromptlintConfig = Object.freeze({
  * Implements the loader in Phase 1. Phase 0 ships the schema and the
  * default config so the rest of the workspace can import them.
  */
-export { promptlintConfigSchema }
-export type { PromptlintConfig }
-export { DEFAULT_CONFIG }

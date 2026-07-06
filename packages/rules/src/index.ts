@@ -18,14 +18,14 @@ export interface RuleManifestEntry {
   readonly description: string
   readonly severity: Severity
   readonly autoFixable: boolean
-  readonly options: ReadonlyArray<RuleOption>
+  readonly options: readonly RuleOption[]
 }
 
 /**
  * The full V1 catalog. The order here is the order shown by `--list-rules`
  * and in the docs.
  */
-export const RULES_MANIFEST: ReadonlyArray<RuleManifestEntry> = Object.freeze([
+export const RULES_MANIFEST: readonly RuleManifestEntry[] = Object.freeze([
   {
     id: "structure/missing-model",
     category: "structure",
@@ -134,9 +134,8 @@ export function findManifestEntry(id: string): RuleManifestEntry | undefined {
  * shape so consumer code can be written against the API without
  * branching on phase availability.
  */
-export function definedRuleIds(): ReadonlyArray<string> {
+export function definedRuleIds(): readonly string[] {
   return RULES_MANIFEST.map((r) => r.id)
 }
 
 export type { RuleDefinition, RuleOption, Severity }
-export { RULES_MANIFEST, findManifestEntry, definedRuleIds }

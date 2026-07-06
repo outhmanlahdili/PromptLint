@@ -19,7 +19,7 @@ describe("RULES_MANIFEST", () => {
       "quality/vague-quantifier-language",
       "convention/filename-naming",
     ]
-    expect(definedRuleIds().sort()).toEqual([...expected].sort())
+    expect([...definedRuleIds()].sort()).toEqual([...expected].sort())
   })
 
   it("has unique ids across the catalog", () => {

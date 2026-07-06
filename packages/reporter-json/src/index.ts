@@ -9,7 +9,7 @@ import type { Finding } from "@promptlint/types"
 export interface JsonReporterPayload {
   readonly schemaVersion: 1
   readonly generatedAt: string
-  readonly findings: ReadonlyArray<Finding>
+  readonly findings: readonly Finding[]
 }
 
 /**
@@ -17,7 +17,7 @@ export interface JsonReporterPayload {
  * facade that the CLI dispatches to.
  */
 export function toJsonPayload(
-  findings: ReadonlyArray<Finding>,
+  findings: readonly Finding[],
   generatedAt: Date = new Date(),
 ): JsonReporterPayload {
   return Object.freeze({
@@ -35,5 +35,3 @@ export function toJsonPayload(
 export function serializeJson(payload: JsonReporterPayload): string {
   return JSON.stringify(payload)
 }
-
-export { type JsonReporterPayload, toJsonPayload, serializeJson }

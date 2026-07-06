@@ -29,6 +29,11 @@ export const SEVERITY_WEIGHT: Readonly<Record<Severity, number>> = Object.freeze
  */
 export type PromptFormat = "prompt.md" | "prompt.ts" | "prompt.json"
 
+export interface VariableOccurrence {
+  readonly name: string
+  readonly location: SourceLocation
+}
+
 /**
  * A variable referenced inside a prompt body, as inferred by the parser.
  *
@@ -38,7 +43,7 @@ export type PromptFormat = "prompt.md" | "prompt.ts" | "prompt.json"
  */
 export interface PromptVariable {
   readonly name: string
-  readonly locations: ReadonlyArray<SourceLocation>
+  readonly locations: readonly SourceLocation[]
 }
 
 /**
@@ -60,7 +65,7 @@ export interface SourceLocation {
 export interface PromptFrontmatter {
   readonly description?: string
   readonly model?: string
-  readonly variables?: ReadonlyArray<string>
+  readonly variables?: readonly string[]
   readonly outputSchema?: Readonly<Record<string, unknown>>
   /** Catch-all for known-in-V2 keys. The core engine never inspects these. */
   readonly extra?: Readonly<Record<string, unknown>>
@@ -81,7 +86,7 @@ export interface PromptFile {
   /** Raw body of the prompt as the user would send to a model. */
   readonly body: string
   readonly frontmatter: PromptFrontmatter
-  readonly variables: ReadonlyArray<PromptVariable>
+  readonly variables: readonly PromptVariable[]
   /** SHA-256 of normalized content, used for caching in later phases. */
   readonly contentHash: string
 }
@@ -101,7 +106,7 @@ export interface Finding {
   readonly severity: Severity
   readonly message: string
   readonly location?: SourceLocation
-  readonly suggestions?: ReadonlyArray<string>
+  readonly suggestions?: readonly string[]
 }
 
 /**
@@ -112,7 +117,7 @@ export interface Finding {
  * engine can budget concurrency uniformly.
  */
 export interface RuleResult {
-  readonly findings: ReadonlyArray<Finding>
+  readonly findings: readonly Finding[]
 }
 
 /**
@@ -139,7 +144,7 @@ export interface RuleContext {
  * via the `defineRule` factory exported from `@promptlint/rule-engine` in
  * Phase 1. The shape below is part of the stable public contract from V1.
  */
-export interface RuleDefinition<TOptions = unknown> {
+export interface RuleDefinition<_TOptions = unknown> {
   /** Stable, namespaced id, e.g. `"quality/missing-output-schema"`. */
   readonly id: string
   /** Human-readable description shown in documentation and `--help`. */
@@ -147,7 +152,7 @@ export interface RuleDefinition<TOptions = unknown> {
   /** Severity applied when the rule fires without explicit overrides. */
   readonly defaultSeverity: Severity
   /** Optional, ordered list of every public option the rule reads. */
-  readonly options?: ReadonlyArray<RuleOption>
+  readonly options?: readonly RuleOption[]
   /**
    * Rule implementation. Returns a finding list. Errors thrown here are
    * surfaced by the engine as a single `error` finding with the rule id;
@@ -165,28 +170,6 @@ export interface RuleDefinition<TOptions = unknown> {
 export interface RuleOption {
   readonly name: string
   readonly type: "string" | "number" | "boolean" | "string[]"
-  readonly default: string | number | boolean | ReadonlyArray<string>
+  readonly default: string | number | boolean | readonly string[]
   readonly description: string
 }
-
-/**
- * Public entry surface for `@promptlint/types`.
- *
- * Re-exports the foundational type model. Downstream packages import from
- * here so that the type shape has exactly one definition.
- */
-export type {
-  Severity,
-  PromptFormat,
-  SourceLocation,
-  PromptVariable,
-  PromptFrontmatter,
-  PromptFile,
-  Finding,
-  RuleContext,
-  RuleResult,
-  RuleDefinition,
-  RuleOption,
-}
-
-export { SEVERITY_WEIGHT }

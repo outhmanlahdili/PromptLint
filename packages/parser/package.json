@@ -24,7 +24,8 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/types": "workspace:*"
+    "@promptlint/types": "workspace:*",
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@promptlint/biome-config": "workspace:*",
