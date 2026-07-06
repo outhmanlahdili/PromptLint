@@ -1,0 +1,41 @@
+{
+  "name": "promptlint",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Lint your prompts. Catch regressions before your users do.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:run": "turbo run test:run",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:run && pnpm build",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "pnpm -r publish --access public",
+    "release": "pnpm changeset:version && pnpm changeset:publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@changesets/changelog-github": "0.5.1",
+    "@changesets/cli": "2.28.1",
+    "@commitlint/cli": "19.6.1",
+    "@commitlint/config-conventional": "19.6.0",
+    "husky": "9.1.7",
+    "lint-staged": "15.2.10",
+    "turbo": "2.3.3",
+    "typescript": "5.7.2"
+  }
+}

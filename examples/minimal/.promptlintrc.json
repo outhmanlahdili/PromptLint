@@ -1,0 +1,15 @@
+{
+  "$schema": "https://promptlint.dev/schema/config.json",
+  "rules": {
+    "quality/missing-output-schema": "error",
+    "quality/vague-instructions": "warning",
+    "quality/missing-system-prompt": "warning",
+    "quality/example-placeholder": "info",
+    "safety/untrusted-input": "error",
+    "safety/prompt-injection": "error",
+    "safety/secret-leak": "error",
+    "safety/excessive-permissions": "warning",
+    "structure/dead-variable": "warning",
+    "structure/duplicate-content": "warning"
+  }
+}

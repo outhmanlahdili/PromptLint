@@ -1,0 +1,15 @@
+{
+  "help": "Want to learn more about pnpm and Turbo?",
+  "tasks": [
+    {
+      "title": "Verify the project builds",
+      "body": "Run `pnpm verify` locally before submitting. All gates must pass: format, lint, typecheck, tests, build.",
+      "labels": ["priority: medium"]
+    },
+    {
+      "title": "Verify CI passes",
+      "body": "Confirm the CI pipeline is green for your branch before requesting review.",
+      "labels": ["priority: medium"]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+out/
+
+# Turbo
+.turbo/
+
+# Test output
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Cache
+.cache/
+.promptlint/
+.promptlintcache.json
+
+# Lockfiles (other than pnpm)
+package-lock.json
+yarn.lock

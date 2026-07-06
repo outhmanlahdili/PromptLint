@@ -1,0 +1,10 @@
+{
+  "extends": "@promptlint/tsconfig/build.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "test", "coverage"]
+}

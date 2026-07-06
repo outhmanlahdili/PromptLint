@@ -1,0 +1,82 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": ["NODE_ENV"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "tsconfig.json",
+        "tsconfig.build.json",
+        "package.json"
+      ],
+      "outputs": ["dist/**", "!dist/**/*.map"]
+    },
+    "lint": {
+      "dependsOn": ["^topo"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "biome.json",
+        "tsconfig.json",
+        "package.json"
+      ],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": [],
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "biome.json"],
+      "outputs": []
+    },
+    "format": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "biome.json"],
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^topo"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "tsconfig.json",
+        "tsconfig.build.json",
+        "package.json"
+      ],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^topo"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "vitest.config.ts",
+        "tsconfig.json",
+        "package.json",
+        "src/**",
+        "test/**"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:run": {
+      "dependsOn": ["^topo"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "vitest.config.ts",
+        "tsconfig.json",
+        "package.json",
+        "src/**",
+        "test/**"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "topo": {
+      "cache": true,
+      "inputs": ["package.json", "tsconfig.json"]
+    },
+    "clean": {
+      "cache": false,
+      "inputs": [],
+      "outputs": ["dist/**", "coverage/**", ".turbo/**"]
+    }
+  }
+}

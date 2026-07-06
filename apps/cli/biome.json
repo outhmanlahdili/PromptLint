@@ -1,0 +1,3 @@
+{
+  "extends": ["@promptlint/biome-config/biome.json"]
+}

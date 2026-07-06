@@ -1,0 +1,39 @@
+name: Changesets
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: changesets-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changesets:
+    name: Changesets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: changesets
+        uses: changesets/action@v1
+        with:
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+          version: pnpm changeset:version
+          publish: pnpm release
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
