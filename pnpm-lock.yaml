@@ -195,6 +195,12 @@ importers:
 
   packages/rules:
     dependencies:
+      '@promptlint/parser':
+        specifier: workspace:*
+        version: link:../parser
+      '@promptlint/rule-engine':
+        specifier: workspace:*
+        version: link:../rule-engine
       '@promptlint/types':
         specifier: workspace:*
         version: link:../types
@@ -202,6 +208,9 @@ importers:
       '@promptlint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
+      '@promptlint/test-utils':
+        specifier: workspace:*
+        version: link:../test-utils
       '@promptlint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
