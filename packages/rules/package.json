@@ -24,10 +24,13 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
+    "@promptlint/parser": "workspace:*",
+    "@promptlint/rule-engine": "workspace:*",
     "@promptlint/types": "workspace:*"
   },
   "devDependencies": {
     "@promptlint/biome-config": "workspace:*",
+    "@promptlint/test-utils": "workspace:*",
     "@promptlint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",

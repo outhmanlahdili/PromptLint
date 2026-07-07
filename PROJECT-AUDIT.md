@@ -83,3 +83,66 @@ This document tracks the architectural decisions, implementation milestones, and
     - Implement CLI integration, wire `runEngine` against `@promptlint/parser` + `@promptlint/config`, and resolve `failOn` into a real exit-code decision.
     - At that point, evaluate whether to introduce bounded concurrency (`p-limit` or a hand-rolled worker pool) without sacrificing determinism.
     - Begin populating `@promptlint/rules` with the V1 rules outlined in Phase 0.
+
+## Phase 3: Built-in Rules
+- **Status**: Completed
+- **Timestamp**: 2026-07-07 20:30 +01:00
+- **Objectives completed**:
+    - Implemented every rule declared in RULES_MANIFEST via defineRule() from @promptlint/rule-engine.
+    - Reusable helpers extracted under packages/rules/src/helpers/ (regex utilities, variable inspection, filename normalization, token estimation, PII / instruction-override vocabulary, structured-data phrasing, vague-quantifier detection).
+    - Public API: every rule exported by named export, plus getImplementedRules() whose order is locked by a runtime assertion against RULES_MANIFEST.
+    - Comprehensive unit tests for every rule (111 tests in @promptlint/rules; entire workspace passes 230 tests).
+    - Documentation: rewrote packages/rules/README.md and appended this entry.
+- **Files added**:
+    - packages/rules/src/helpers/{tokens,variables,filename,regex,pii,instruction-override,vague-quantifiers,structured-data,index}.ts.
+    - packages/rules/src/generated/manifest.ts (extracted from the legacy bundled index).
+    - packages/rules/src/structure/{missing-model,missing-description,unused-variable,undefined-variable}.ts.
+    - packages/rules/src/cost/high-token-estimate.ts.
+    - packages/rules/src/security/{pii-pattern,instruction-override-pattern}.ts.
+    - packages/rules/src/quality/{missing-output-schema,vague-quantifier-language}.ts.
+    - packages/rules/src/convention/filename-naming.ts.
+    - One test file per rule under the corresponding category folder (10 files, 99 tests plus 12 manifest/API tests).
+    - packages/rules/src/test-helpers.ts: shared makeContext / unRule harness used by every rule test.
+- **Files modified**:
+    - packages/rules/src/index.ts: now re-exports individual rules, adds getImplementedRules(), asserts the order against RULES_MANIFEST at module-load time.
+    - packages/rules/src/index.test.ts: extended to cover the new public API and frozen-return contract.
+    - packages/rules/package.json: declares the @promptlint/rule-engine, @promptlint/parser, and @promptlint/test-utils workspace deps needed by the new rule code and tests.
+    - iome.json: ignored the workspace-local .opencode/ directory so the IDE/host tooling config files no longer flag the root ormat:check step.
+    - packages/rules/README.md: rewritten to describe category layout, helper layer, public API, and authoring guide.
+- **Public APIs introduced**:
+    - getImplementedRules(): readonly RuleDefinition[] — the runtime list of every built-in rule in RULES_MANIFEST order, used to feed the engine.
+    - Named rule exports: structureMissingModel, structureMissingDescription, structureUnusedVariable, structureUndefinedVariable, costHighTokenEstimate, securityPiiPattern, securityInstructionOverridePattern, qualityMissingOutputSchema, qualityVagueQuantifierLanguage, conventionFilenameNaming.
+    - Helper exports: estimateTokens, collectBodyVariables, collectDeclaredVariables, indVariableOccurrences, isVariableMissing, extractPathBasename, isKebabCaseBasename, compileWordPattern, compileWordRegex, indAllMatches, locationForRange, PII_PATTERNS, detectPiiMatches, INSTRUCTION_OVERRIDE_PATTERNS, indInstructionOverrideMatches, VAGUE_QUANTIFIER_TERMS, indVagueQuantifierMatches, STRUCTURED_DATA_KEYWORDS, hasStructuredDataKeyword.
+- **Architectural decisions**:
+    - One file per rule, colocated with its tests under a category folder; helpers live in helpers/ so individual rule files stay small and auditable.
+    - RULES_MANIFEST is the canonical source of order; ssertManifestOrder() runs at module load and throws if IMPLEMENTED_RULES ever drifts.
+    - All rules declare a (possibly empty) options: Object.freeze([]) to keep the merge between manifest metadata and live definitions symmetric.
+    - The cost/high-token-estimate rule is the only option-bearing rule in V1; its sole option maxTokens defaults to 2000 and the helper layer treats   or negative values as a disabled-rule signal.
+    - Token estimation accounts for ASCII letters, Latin/Greek/Cyrillic blocks, and the CJK / Kana ranges — sufficient for the V1 budget hint without bundling a model tokenizer.
+    - indAllMatches() clones the regex with the g flag unconditionally so call sites can supply non-global regexes without losing String.matchAll semantics.
+    - Filename rule strips only known V1 extensions (prompt.md / prompt.ts / prompt.json plus the bare extensions) and emits a deterministic kebab-case transformation that handles camelCase, snake_case, and mixed punctuation.
+- **Tests added**:
+    - 99 rule-level tests under individual rule test files (valid + invalid prompts, empty bodies, unicode content, multiple findings, configurable options, malformed markdown where relevant).
+    - 12 manifest / API tests in packages/rules/src/index.test.ts.
+- **Verification results**:
+    - pnpm format:check — green (128 files clean).
+    - pnpm lint — green (20 tasks successful).
+    - pnpm typecheck — green (20 tasks successful).
+    - pnpm test:run — green across the workspace:
+        - @promptlint/parser 69/69
+        - @promptlint/rule-engine 29/29
+        - @promptlint/rules 111/111
+        - @promptlint/types 2/2
+        - @promptlint/test-utils 4/4
+        - @promptlint/reporter-json 4/4
+        - @promptlint/reporter-human 5/5
+        - @promptlint/config 7/7
+    - pnpm build — green (14 tasks successful, all distributions emitted).
+    - pnpm verify — green end-to-end.
+- **Technical debt**:
+    - pnpm-lock.yaml was regenerated to reflect the new workspace deps (@promptlint/parser, @promptlint/rule-engine, @promptlint/test-utils in packages/rules). No transitive drift outside that package.
+    - Replacement of the legacy RuleManifestEntry export with a re-export from generated/manifest.ts keeps the public surface identical; downstream callers that imported the type by path continue to work because the re-export preserves the symbol.
+- **Recommendation for Phase 4**:
+    - Wire @promptlint/rules into the CLI; Phase 4 should now provide the loader that reads promptlint.config.* and resolves uleSeverity / uleOptions per rule before calling unEngine.
+    - Evaluate bounded concurrency in the rule engine once the CLI integration is staged; determinism guarantees (uleId -> ileId lexicographic sort) still apply.
+    - Begin adding config-level option schema validation now that rule options are declared.
