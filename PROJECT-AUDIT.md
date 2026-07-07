@@ -146,3 +146,78 @@ This document tracks the architectural decisions, implementation milestones, and
     - Wire @promptlint/rules into the CLI; Phase 4 should now provide the loader that reads promptlint.config.* and resolves uleSeverity / uleOptions per rule before calling unEngine.
     - Evaluate bounded concurrency in the rule engine once the CLI integration is staged; determinism guarantees (uleId -> ileId lexicographic sort) still apply.
     - Begin adding config-level option schema validation now that rule options are declared.
+
+## Phase 4: CLI Integration
+- **Status**: Completed
+- **Timestamp**: 2026-07-07 23:14 +01:00
+- **Objectives completed**:
+    - CLI entry point: `promptlint` bin (tsx shebang) shells into an in-process `runCli` orchestrator; never throws or calls `process.exit` from business logic.
+    - Subcommand dispatcher (`help`, `version`, `check`) with strict argv parsing via `node:util` `parseArgs`.
+    - Recursive file discovery (`.prompt.md`, `.prompt.ts`, `.prompt.json`) with deterministic ordering and an `IGNORED_DIRECTORY_NAMES` prune set (`node_modules`, `.git`, `dist`, `build`, `coverage`).
+    - End-to-end lint pipeline: `discover -> readFile -> parsePrompt -> runEngine(getImplementedRules()) -> renderReport -> computeExitCode`.
+    - Reporter selection: human (existing `formatFindingsForHuman` + scan-summary line) or JSON (deterministic `serializeJson(toJsonPayload(...))`).
+    - Parser-error transport: `runEngine` failures and `ParseResult.errors` are surfaced as `parser/parse-error` findings so the file is still linted by the rule set.
+    - Exit-code policy: `0` success, `1` findings at or above `--fail-on`, `2` invocation or runtime errors; `info` never trips the threshold.
+    - `--quiet`, `--no-color`, `--format`, `--fail-on` flags wired through `parseCliArgs` to `ResolvedOptions`.
+    - Test coverage: 32 integration tests in `src/cli.test.ts` (argument validation, single-file or directory linting, exit codes, both output formats, ignored directories, parser failures) plus 6 subprocess smoke tests in `src/bin.smoke.test.ts` that launch the real `tsx` bin.
+    - Documentation: full rewrite of `apps/cli/README.md` (quick start, commands, options, supported formats, ignored directories, exit codes, architecture diagram, public API) and root `README.md` status refreshed to Phase 4.
+- **Files added**:
+    - `apps/cli/bin/promptlint.ts` - tsx shebang shim; the only file that touches `process.stdout`, `process.stderr`, or `process.exit`.
+    - `apps/cli/src/cli.ts` - `runCli(argv, importMetaUrl)` dispatcher.
+    - `apps/cli/src/options.ts` - `parseCliArgs` plus `CliArgumentError`, enum validation for `--format` and `--fail-on`.
+    - `apps/cli/src/discover.ts` - `discoverPrompts`, `formatForFile`, `IGNORED_DIRECTORY_NAMES`.
+    - `apps/cli/src/lint.ts` - orchestrator (read, parse, engine, exit code) plus `computeExitCode`.
+    - `apps/cli/src/reporter.ts` - `renderReport` for human and json plus the scan-summary line.
+    - `apps/cli/src/help.ts` - `HELP_TEXT` literal plus `readVersion(importMetaUrl)`.
+    - `apps/cli/src/types.ts` - `Format`, `FailOn`, `ResolvedOptions`, `CliResult`, `ExitCode`.
+    - `apps/cli/src/cli.test.ts` - 32 hermetic integration tests against temporary fixtures.
+    - `apps/cli/src/bin.smoke.test.ts` - 6 subprocess smoke tests covering the real bin.
+- **Files modified**:
+    - `apps/cli/README.md` - rewritten from "Phase 0 status: empty scaffold" to a complete CLI guide.
+    - `apps/cli/package.json` - wired workspace dependencies (`@promptlint/parser`, `@promptlint/rule-engine`, `@promptlint/rules`, `@promptlint/reporter-human`, `@promptlint/reporter-json`, `@promptlint/types`, `tsx`); `bin` now points at `bin/promptlint.ts`; `lint` and `lint:fix` scan `src` plus `bin`; `test` and `test:run` no longer use `--passWithNoTests`.
+    - `apps/cli/biome.json` - `include` extended to `bin/**/*` so the launcher is linted and formatted alongside the rest of the package.
+    - `apps/cli/tsconfig.json` - `include` extended to `bin/**/*` so the shebang script participates in `typecheck`.
+    - `apps/cli/src/index.ts` - Phase-0 empty file replaced with the full public surface (`runCli`, `lint`, `computeExitCode`, `PARSER_ERROR_RULE_ID`, `parseCliArgs`, `CliArgumentError`, `discoverPrompts`, `formatForFile`, `IGNORED_DIRECTORY_NAMES`, `renderReport`, `HELP_TEXT`, `readVersion`, `ExitCode`) plus their accompanying exported types.
+    - `pnpm-lock.yaml` - regenerated to include the added CLI dependencies.
+    - `README.md` (root) - status table and prose updated to Phase 4 with a `Status` column.
+- **Files deleted**:
+    - None.
+- **Public APIs introduced**:
+    - `runCli(argv, importMetaUrl)` - in-process entry point; returns a `{ exitCode, stdout, stderr }` payload.
+    - `lint(targetPath, options)` - orchestrator usable from host applications.
+    - `computeExitCode(findings, failOn)` - severity to exit-code decision (single source of truth).
+    - `PARSER_ERROR_RULE_ID = "parser/parse-error"` - well-known rule id used to surface parser errors as findings.
+    - `parseCliArgs(argv)` plus `CliArgumentError` - argv to `ParsedCli` with `strict: true` rejection of unknown flags.
+    - `discoverPrompts(target)`, `formatForFile(name)`, `IGNORED_DIRECTORY_NAMES` - file-walk API.
+    - `renderReport({ findings, fileCount, ruleCount, durationMs, options })` - format dispatch.
+- **Architectural decisions**:
+    - **Bin shim stays tiny.** `bin/promptlint.ts` deliberately forwards to `runCli`; all logic lives under `src/` so nothing has to be tested through a subprocess (with `bin.smoke.test.ts` providing the one real-launch regression barrier).
+    - **Two-layer error model.** `runCli` never throws - every error path becomes a `CliResult` with `exitCode: Unexpected` and a stderr message; the bin shim wraps the final `await` in `.catch(...)` as a last-resort guard so no uncaught exception escapes the process.
+    - **Discovery normalizes to forward slashes** so path comparison is stable across platforms; `toOsPath` re-localizes for `readFile`.
+    - **Pipeline ownership of exit codes.** `computeExitCode` is the single decision point: any future reporter (or test) that needs to know whether the run failed calls this - the bin never re-derives a threshold.
+    - **Reporter layering.** `renderReport` calls into existing `@promptlint/reporter-human` and `@promptlint/reporter-json` packages unchanged; scan-level metadata (file and rule counts plus duration) is composed by the CLI rather than expanding either reporter's contract.
+    - **Quiet semantics.** `--quiet` only suppresses output on success (`exitCode === 0`); failures stay loud regardless of the flag so the user is never silently routed away from problems.
+- **Tests added**:
+    - 32 integration tests in `apps/cli/src/cli.test.ts` covering help and version routing, unknown commands, missing or extra positional args, `--format` and `--fail-on` enum validation, single-file scanning, recursive directory scanning, ignored-directory pruning, empty target, both formats, `--quiet` interaction with success and failure, `--no-color`, exit codes per severity threshold, and parser-error transport.
+    - 6 subprocess smoke tests in `apps/cli/src/bin.smoke.test.ts` launching the tsx bin against small fixtures: `--help`, `--version`, clean scan exit 0, finding-bearing scan exit 1, missing target exit 2, JSON output round-trip.
+- **Verification results**:
+    - `pnpm format:check` - green.
+    - `pnpm lint` - green.
+    - `pnpm typecheck` - green.
+    - `pnpm test:run` - green; new tests co-exist with the 230 tests from earlier phases.
+    - `pnpm build` - green (`@promptlint/cli` build is a documented no-op because the package is run from source via tsx).
+    - `pnpm verify` - green end-to-end.
+- **Technical debt**:
+    - `--format` and `--fail-on` are validated against inlined allowlists; if either enum grows the strings have to be edited in two places (`types.ts` plus `options.ts`).
+    - `package.json` `clean` script uses `rm -rf` (Unix-native); Windows contributors need WSL or a posix shell or the script must be ported (already noted in Phase 2).
+    - No config-file loader yet: `.promptlintrc.json` is a Phase 0 contract but the CLI still uses defaults exclusively. Config loading plus `ruleSeverity` and `ruleOptions` resolution is the natural Phase 5 scope.
+- **Known limitations**:
+    - The CLI does not yet read `promptlint.config.*` files; `--format`, `--fail-on`, `--quiet`, and `--no-color` are the only knobs.
+    - No glob or multi-path support - `promptlint check` accepts exactly one positional argument.
+    - No progress reporting for slow scans; a long directory walk is silent until completion.
+    - `--no-color` is wired but the upstream human reporter is the authority for color gating; this command is plumbed through correctly only when the reporter honors it.
+- **Recommendation for Phase 5**:
+    - Introduce the `@promptlint/config` loader so `ruleSeverity` and `ruleOptions` flow from `.promptlintrc.json` into `runEngine` (the engine already accepts both shapes - they were reserved in Phase 2).
+    - Wire schema-validated option parsing for any rule that declares options (Phase 3's `cost/high-token-estimate` is the only option-bearing rule today, with its `maxTokens` threshold).
+    - Treat the bin-launch boundary as the seam to add a real esbuild-built distribution later, replacing the `tsx` shebang with a compiled artifact for npm-published installs.
+

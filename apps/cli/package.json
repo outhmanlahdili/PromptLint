@@ -14,19 +14,27 @@
     }
   },
   "bin": {
-    "promptlint": "./src/index.ts"
+    "promptlint": "./bin/promptlint.ts"
   },
   "scripts": {
-    "lint": "biome check src",
-    "lint:fix": "biome check --write src",
+    "lint": "biome check src bin",
+    "lint:fix": "biome check --write src bin",
     "typecheck": "tsc --noEmit",
-    "test": "vitest --passWithNoTests",
-    "test:run": "vitest run --passWithNoTests",
-    "build": "echo \"no-op (Phase 0)\" && exit 0",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "build": "echo \"no-op (CLI runs from source via tsx)\" && exit 0",
     "clean": "rm -rf dist .turbo coverage",
     "topo": "echo \"topo\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "@promptlint/parser": "workspace:*",
+    "@promptlint/reporter-human": "workspace:*",
+    "@promptlint/reporter-json": "workspace:*",
+    "@promptlint/rule-engine": "workspace:*",
+    "@promptlint/rules": "workspace:*",
+    "@promptlint/types": "workspace:*",
+    "tsx": "4.19.2"
+  },
   "devDependencies": {
     "@promptlint/biome-config": "workspace:*",
     "@promptlint/tsconfig": "workspace:*",

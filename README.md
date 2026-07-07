@@ -9,16 +9,20 @@ interface.
 
 ## Status
 
-This repository is at **Phase 0**. Phase 0 establishes the public contracts
-and package boundaries that later phases implement. See
-[`PHASE-0-AUDIT.md`](./PHASE-0-AUDIT.md) for the canonical status of the
-phase and the deliverables it ships.
+This repository is at **Phase 4**. The CLI is wired end-to-end
+(discovery → parsing → rule engine → reporting) and is usable from the
+terminal via `pnpm exec promptlint check`. See
+[`PROJECT-AUDIT.md`](./PROJECT-AUDIT.md) for the canonical milestone
+log, and [`apps/cli/README.md`](./apps/cli/README.md) for usage of the
+command-line interface.
 
-| Phase | Focus                                                                                  |
-| ----- | -------------------------------------------------------------------------------------- |
-| 0     | Public types, package contracts, rule manifest metadata, reporter interfaces.         |
-| 1     | Parser implementations, config loading, rule-engine dispatch.                         |
-| 2     | Reporter rendering, rule checks, full CLI integration, documentation site.            |
+| Phase | Focus                                                                                  | Status      |
+| ----- | -------------------------------------------------------------------------------------- | ----------- |
+| 0     | Public types, package contracts, rule manifest metadata, reporter interfaces.         | Completed   |
+| 1     | Parser implementations, config loading, rule-engine dispatch.                         | Completed   |
+| 2     | Rule engine foundation, sequential rule × file dispatch.                              | Completed   |
+| 3     | Built-in rule implementations, helpers, and per-rule tests.                            | Completed   |
+| 4     | CLI integration (discovery, arg parsing, reporting, exit codes), bin launcher.         | Completed   |
 
 ## Repository layout
 

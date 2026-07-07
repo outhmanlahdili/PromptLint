@@ -1,6 +1,6 @@
 {
   "extends": "@promptlint/tsconfig/base.json",
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "bin/**/*", "test/**/*"],
   "exclude": ["dist", "node_modules", "coverage", ".astro", ".next"],
   "compilerOptions": {
     "rootDir": ".",
