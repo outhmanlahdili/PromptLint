@@ -11,7 +11,9 @@ interface.
 
 This repository is at **Phase 4**. The CLI is wired end-to-end
 (discovery → parsing → rule engine → reporting) and is usable from the
-terminal via `pnpm exec promptlint check`. See
+terminal via `pnpm promptlint check` (a workspace script that forwards
+to `@promptlint/cli`'s tsx launcher while preserving the caller's
+working directory). See
 [`PROJECT-AUDIT.md`](./PROJECT-AUDIT.md) for the canonical milestone
 log, and [`apps/cli/README.md`](./apps/cli/README.md) for usage of the
 command-line interface.

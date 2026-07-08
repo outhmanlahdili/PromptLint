@@ -25,6 +25,7 @@
     "changeset:version": "changeset version",
     "changeset:publish": "pnpm -r publish --access public",
     "release": "pnpm changeset:version && pnpm changeset:publish",
+    "promptlint": "node scripts/run-cli.mjs",
     "prepare": "husky"
   },
   "devDependencies": {

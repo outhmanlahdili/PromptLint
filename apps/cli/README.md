@@ -11,22 +11,61 @@ parsing → rule engine → reporting. It is usable from the terminal via the
 
 ## Quick start
 
+The repository's root `package.json` exposes a `promptlint` script
+backed by `scripts/run-cli.mjs`. The launcher re-execs the CLI's tsx
+binary in-process so it works regardless of pnpm's `.bin` link policy
+and preserves the caller's working directory. From the repo root:
+
 ```bash
-# From the repo root (workspace-aware):
-pnpm exec promptlint check .
+# Show usage:
+pnpm promptlint --help
+
+# Lint every prompt file in the workspace:
+pnpm promptlint check .
 
 # Lint a specific file:
-pnpm exec promptlint check prompts/example.prompt.md
+pnpm promptlint check prompts/example.prompt.md
 
 # JSON output for CI:
-pnpm exec promptlint check . --format json
+pnpm promptlint check . --format json
 
 # Only fail on errors (not warnings):
-pnpm exec promptlint check . --fail-on error
+pnpm promptlint check . --fail-on error
 
 # Quiet mode (suppress output on success):
-pnpm exec promptlint check . --quiet
+pnpm promptlint check . --quiet
 ```
+
+Relative path arguments (`check ./test.prompt.md`, `check .`) resolve
+against the caller's working directory, not against `apps/cli/`. The
+launcher reads `INIT_CWD` (set by pnpm) and forwards it to the CLI's
+spawn context so the CLI's own `process.cwd()` matches what the user
+typed in their shell.
+
+### How the launcher works
+
+`scripts/run-cli.mjs` (root) resolves `apps/cli/bin/promptlint.ts`
+relative to its own location and spawns a child Node process with:
+
+```
+node --import <absolute-path-to-apps/cli/node_modules/tsx/dist/loader.mjs>
+     apps/cli/bin/promptlint.ts <argv>
+```
+
+- The `--import` is an ESM loader hook registered as a `file://` URL, so
+  it does not rely on `node_modules/.bin` shims (which pnpm does not
+  always create).
+- The child's CWD is set from `INIT_CWD` so relative paths resolve from
+  the caller's directory. Falls back to the parent's CWD if `INIT_CWD`
+  is unset.
+- argv is forwarded verbatim; nothing in the launcher distinguishes
+  valid CLI flags from any other argument.
+
+The CLI does not register a `node_modules/.bin/promptlint` shim during
+a workspace `pnpm install`. Use the `pnpm promptlint ...` root script;
+calling `tsx` directly via `pnpm --filter @promptlint/cli exec tsx …`
+is unsupported because it depends on pnpm's `.bin` link policy and is
+not part of the documented developer workflow.
 
 ## Commands
 
