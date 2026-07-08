@@ -1,8 +1,7 @@
 {
   "name": "@promptlint/cli",
-  "version": "0.0.0",
-  "private": true,
-  "description": "PromptLint command-line interface.",
+  "version": "1.0.0",
+  "description": "PromptLint command-line interface. Lint your prompts. Catch regressions before your users do.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",

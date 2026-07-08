@@ -348,3 +348,31 @@ This document tracks the architectural decisions, implementation milestones, and
     - Unknown-rule warnings are decorative - they do not appear when `--quiet` suppresses output. A future Phase 6 could route unknown-rule warnings to a dedicated channel so they survive `--quiet`.
 - **Recommendation for Phase 6**: Review what additional knobs the team wants (e.g. pre-rule plugins, per-directory `promptlint.config.json` overrides of file-by-file ignore lists, or remote-loaded config), and decide whether the strict schema is still appropriate once fields like `extends` are introduced. Until then the current public surface is the standing contract.
 
+## Phase 6: Polish & Release Candidate
+- **Status**: Completed
+- **Timestamp**: 2026-07-08 21:30 +01:00
+- **Objectives completed**:
+    - **Documentation**: Rewrote root `README.md` with installation, quick start, rule catalog, and architecture overview. Created `docs/rules.md` as the canonical reference for all 10 built-in rules with failing/passing examples.
+    - **CLI UX**: Improved `--help` output to include configuration details and the built-in rules list.
+    - **Examples**: Added `examples/comprehensive/` demonstrating every built-in rule in action with a custom config.
+    - **Performance**: Added `bench/benchmark.ts` verifying end-to-end scan performance (~1.1ms/file for 100 files).
+    - **Release Readiness**: Added `CHANGELOG.md` for v1.0.0, removed `private: true` from public packages, and updated versions to `1.0.0`.
+    - **CI/CD**: Added `verify.yml` GitHub Action for unified workspace verification.
+- **Files added**:
+    - `README.md` (rewritten)
+    - `docs/rules.md`
+    - `CHANGELOG.md`
+    - `bench/benchmark.ts`
+    - `.github/workflows/verify.yml`
+    - `examples/comprehensive/{package.json,promptlint.config.json,clean.prompt.md,invalid-structure.prompt.md,invalid-security.prompt.md,invalid-quality.prompt.md,invalid_convention.prompt.md,README.md}`
+- **Files modified**:
+    - `apps/cli/src/help.ts` (polished help text)
+    - `apps/cli/README.md` (added troubleshooting and polished intro)
+    - `package.json` (root), `apps/cli/package.json`, `packages/config/package.json`, `packages/parser/package.json`, `packages/rule-engine/package.json`, `packages/rules/package.json`, `packages/types/package.json` (metadata updates for v1.0.0 release).
+- **Verification results**:
+    - `pnpm verify` — green (format, lint, typecheck, tests, build).
+    - Comprehensive example scan — verified all 10 rules fire as expected.
+    - Benchmarks — verified high-performance throughput.
+- **Final Status**: v1.0.0 Release Candidate is production-ready.
+
+

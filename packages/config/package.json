@@ -1,8 +1,7 @@
 {
   "name": "@promptlint/config",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Configuration loader for `promptlint.config.{ts,json}` (Phase 5). Validates with Zod and exposes rule-severity and rule-option overrides.",
+  "version": "1.0.0",
+  "description": "Configuration loader for `promptlint.config.{ts,json}`. Validates with Zod and exposes rule-severity and rule-option overrides.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",

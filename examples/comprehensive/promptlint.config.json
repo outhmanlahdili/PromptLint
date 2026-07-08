@@ -1,0 +1,22 @@
+{
+  "failOn": "warning",
+  "format": "human",
+  "ignore": ["ignored-dir/**"],
+  "rules": {
+    "structure/missing-model": "warning",
+    "structure/missing-description": "warning",
+    "structure/unused-variable": "warning",
+    "structure/undefined-variable": "error",
+    "cost/high-token-estimate": {
+      "severity": "warning",
+      "options": {
+        "maxTokens": 50
+      }
+    },
+    "security/pii-pattern": "error",
+    "security/instruction-override-pattern": "warning",
+    "quality/missing-output-schema": "warning",
+    "quality/vague-quantifier-language": "info",
+    "convention/filename-naming": "info"
+  }
+}

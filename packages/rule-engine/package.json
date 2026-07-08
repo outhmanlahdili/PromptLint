@@ -1,7 +1,6 @@
 {
   "name": "@promptlint/rule-engine",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "description": "Rule engine that loads, schedules, and dispatches lint rules over parsed prompt files.",
   "license": "MIT",
   "type": "module",

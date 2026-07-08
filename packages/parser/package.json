@@ -1,8 +1,7 @@
 {
   "name": "@promptlint/parser",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Parsers for `.prompt.md`, `.prompt.ts`, and `.prompt.json`. Phase 1 implements the converters; Phase 0 ships the format registry and dispatch contract.",
+  "version": "1.0.0",
+  "description": "Parsers for `.prompt.md`, `.prompt.ts`, and `.prompt.json` prompt files.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",

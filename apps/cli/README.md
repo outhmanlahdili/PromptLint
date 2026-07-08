@@ -3,8 +3,6 @@
 PromptLint command-line interface. Lint your prompts. Catch regressions
 before your users do.
 
-## Phase 5 status — complete
-
 The CLI wires the full PromptLint pipeline end-to-end (file discovery →
 parsing → rule engine → reporting) and consumes `@promptlint/config`
 for the user's resolved configuration. Configuration influences
@@ -211,3 +209,21 @@ import { runCli } from "@promptlint/cli"
 const result = await runCli(["check", "prompts/"], import.meta.url)
 // result.exitCode, result.stdout, result.stderr
 ```
+
+## Troubleshooting & Common Pitfalls
+
+### Configuration not being picked up?
+PromptLint looks for `promptlint.config.{ts,json}` starting from the
+**current working directory of your shell**, not the path of the files
+being scanned. If your config is located in a subfolder, you must `cd`
+into that folder before running the CLI.
+
+### Why are some rules ignored?
+Check the `ignore` array in your configuration. PromptLint uses
+picomatch for globbing. A pattern like `dist/**` will match any path
+containing a `dist` folder at any depth.
+
+### CLI flags vs. Config
+Remember that flags like `--format` and `--fail-on` always take
+precedence over the configuration file. Rule options and severities,
+however, are only defined in the configuration file.

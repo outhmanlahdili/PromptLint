@@ -1,8 +1,7 @@
 {
   "name": "@promptlint/rules",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Built-in lint rules for PromptLint V1. Phase 0 ships the manifest of declared rule metadata; Phase 2 implements each rule's check function.",
+  "version": "1.0.0",
+  "description": "Built-in lint rules for PromptLint V1.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",
