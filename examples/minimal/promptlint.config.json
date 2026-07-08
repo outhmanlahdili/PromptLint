@@ -1,0 +1,17 @@
+{
+  "$schema": "https://promptlint.dev/schema/config.json",
+  "failOn": "warning",
+  "format": "human",
+  "rules": {
+    "structure/missing-model": "error",
+    "structure/missing-description": "warning",
+    "structure/unused-variable": "warning",
+    "structure/undefined-variable": "error",
+    "cost/high-token-estimate": "warning",
+    "security/pii-pattern": "error",
+    "security/instruction-override-pattern": "error",
+    "quality/missing-output-schema": "error",
+    "quality/vague-quantifier-language": "warning",
+    "convention/filename-naming": "info"
+  }
+}

@@ -21,8 +21,8 @@ contributing.
 ### Setup
 
 ```bash
-git clone https://github.com/promptlint/promptlint.git
-cd promptlint
+wwwwwwwwwwwwwwgit clone https://github.com/outhmanlahdili/PromtLint.git
+cd PromtLint
 pnpm install
 pnpm prepare        # installs Husky hooks
 pnpm verify         # runs format:check, lint, typecheck, test:run, build

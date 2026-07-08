@@ -1,8 +1,7 @@
 {
   "name": "@promptlint/reporter-human",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Human-readable terminal reporter. Phase 0 ships the formatter contract; Phase 2 implements the renderer.",
+  "version": "1.0.0",
+  "description": "Human-readable terminal reporter for PromptLint findings.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",

@@ -3,8 +3,8 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "promptlint/promptlint",
-      "user": "promptlint"
+      "repo": "outhmanlahdili/PromtLint",
+      "user": "outhmanlahdili"
     }
   ],
   "commit": false,
@@ -12,6 +12,5 @@
   "linked": [],
   "access": "public",
   "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": ["!**", "examples/**", "tooling/**"]
+  "updateInternalDependencies": "patch"
 }

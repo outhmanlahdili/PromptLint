@@ -29,10 +29,10 @@ ARGUMENTS
   <path>              A prompt file or a directory to scan recursively.
 
 CONFIGURATION
-  PromptLint automatically loads "promptlint.config.ts" or 
-  "promptlint.config.json" from the target directory, walking upward 
+  PromptLint automatically loads "promptlint.config.ts" or
+  "promptlint.config.json" from the target directory, walking upward
   to the filesystem root if none is found.
-  
+
   CLI flags (like --format or --fail-on) always override configuration settings.
 
 BUILT-IN RULES CATALOG
@@ -57,7 +57,7 @@ EXIT CODES
   2   Invalid invocation, invalid configuration, or unexpected runtime error.
 
 PromptLint ignores node_modules, .git, dist, build, and coverage when
-scanning directories. See https://github.com/outhmanlahdili/PromtLint 
+scanning directories. See https://github.com/outhmanlahdili/PromtLint
 for the full guide and docs/rules.md for details of each rule.
 `
 

@@ -28,7 +28,7 @@ Phase 0 establishes the foundational contracts for PromptLint V1 without impleme
   - Rule metadata only; `check` implementations are not part of Phase 0.
 
 - `@promptlint/config`
-  - Zod schema for `.promptlintrc.json`.
+  - Zod schema for `promptlint.config.json`.
   - Default configuration values.
 
 - `@promptlint/reporter-human`

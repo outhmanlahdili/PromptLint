@@ -124,8 +124,9 @@ export async function lint(targetPath: string, options: ResolvedOptions): Promis
 
     const exitCode = computeExitCode(findings, effectiveFailOn)
 
-    const stdout = options.quiet && exitCode === ExitCode.Success ? "" : report.stdout
-    const stderr = combineStderr(report.stderr, unknownWarnings)
+    const silentOnSuccess = options.quiet && exitCode === ExitCode.Success
+    const stdout = silentOnSuccess ? "" : report.stdout
+    const stderr = silentOnSuccess ? "" : combineStderr(report.stderr, unknownWarnings)
 
     return { exitCode, stdout, stderr }
   } catch (err: unknown) {
@@ -135,8 +136,8 @@ export async function lint(targetPath: string, options: ResolvedOptions): Promis
 
 /**
  * Render the empty-prompt-files case. Honors `--quiet`: silent on
- * success, still surfaces unknown-rule warnings and the config-file
- * banner.
+ * success, including the unknown-rule warnings so `--quiet` truly
+ * suppresses all output when the scan succeeds.
  */
 function renderEmpty(_targetPath: string, options: ResolvedOptions, warnings: string): LintOutcome {
   const report = renderReport({
@@ -147,7 +148,7 @@ function renderEmpty(_targetPath: string, options: ResolvedOptions, warnings: st
     options: { ...options },
   })
   if (options.quiet) {
-    return { exitCode: ExitCode.Success, stdout: "", stderr: warnings }
+    return { exitCode: ExitCode.Success, stdout: "", stderr: "" }
   }
   return {
     exitCode: ExitCode.Success,

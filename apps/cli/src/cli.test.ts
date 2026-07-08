@@ -331,6 +331,35 @@ describe("runCli --quiet", () => {
   })
 })
 
+describe("runCli --quiet with config warnings", () => {
+  let cwd = ""
+  let tmp = ""
+
+  beforeEach(async () => {
+    cwd = process.cwd()
+    tmp = await mkdtemp(path.join(tmpdir(), "promptlint-quiet-"))
+    process.chdir(tmp)
+    await writeFile(
+      path.join(tmp, "promptlint.config.json"),
+      JSON.stringify({ rules: { "definitely/not-a-rule": "warning" } }),
+      "utf8",
+    )
+  })
+
+  afterEach(async () => {
+    process.chdir(cwd)
+    await rm(tmp, { recursive: true, force: true })
+  })
+
+  it("suppresses unknown-rule warnings on stderr when the scan succeeds", async () => {
+    const file = await writeFixture("clean.prompt.md", CLEAN_PROMPT)
+    const result = await runCli(["check", file, "--quiet", "--no-color"], META_URL)
+    expect(result.exitCode).toBe(ExitCode.Success)
+    expect(result.stdout).toBe("")
+    expect(result.stderr).toBe("")
+  })
+})
+
 describe("runCli --no-color", () => {
   it("accepts --no-color without error", async () => {
     const file = await writeFixture("clean.prompt.md", CLEAN_PROMPT)
