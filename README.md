@@ -9,14 +9,16 @@ interface.
 
 ## Status
 
-This repository is at **Phase 4**. The CLI is wired end-to-end
-(discovery → parsing → rule engine → reporting) and is usable from the
-terminal via `pnpm promptlint check` (a workspace script that forwards
-to `@promptlint/cli`'s tsx launcher while preserving the caller's
-working directory). See
-[`PROJECT-AUDIT.md`](./PROJECT-AUDIT.md) for the canonical milestone
-log, and [`apps/cli/README.md`](./apps/cli/README.md) for usage of the
-command-line interface.
+This repository is at **Phase 5**. The CLI is wired end-to-end
+(discovery → parsing → rule engine → reporting), and the configuration
+system is production-ready: PromptLint reads
+`promptlint.config.{ts,json}` (walking up from `process.cwd()`) and
+applies `failOn`, `format`, `ignore` globs, and per-rule `severity`
+plus `options` to every scan. See [`PROJECT-AUDIT.md`](./PROJECT-AUDIT.md)
+for the canonical milestone log,
+[`apps/cli/README.md`](./apps/cli/README.md) for usage of the CLI, and
+[`packages/config/README.md`](./packages/config/README.md) for the
+configuration schema and loader behavior.
 
 | Phase | Focus                                                                                  | Status      |
 | ----- | -------------------------------------------------------------------------------------- | ----------- |
@@ -24,7 +26,8 @@ command-line interface.
 | 1     | Parser implementations, config loading, rule-engine dispatch.                         | Completed   |
 | 2     | Rule engine foundation, sequential rule × file dispatch.                              | Completed   |
 | 3     | Built-in rule implementations, helpers, and per-rule tests.                            | Completed   |
-| 4     | CLI integration (discovery, arg parsing, reporting, exit codes), bin launcher.         | Completed   |
+| 4     | CLI integration (discovery, arg parsing, reporting, exit codes), launcher fix.         | Completed   |
+| 5     | Configuration system (Zod schema, loader, defaults, merge, ignore matcher, resolver). | Completed   |
 
 ## Repository layout
 

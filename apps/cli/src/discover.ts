@@ -37,6 +37,21 @@ export interface DiscoveryResult {
 }
 
 /**
+ * Optional filter applied to the absolute path of every discovered
+ * file. Returning `true` drops the file from the result.
+ *
+ * The matcher is built once from the user's `config.ignore` glob array
+ * (see `@promptlint/config`). The CLI passes `undefined` (no user
+ * config, no additional filtering) or a matcher compiled from the
+ * config.
+ *
+ * The matcher must handle forward-slash and back-slash paths so it
+ * works across platforms; the implementation in `@promptlint/config`
+ * already normalizes to forward slashes internally.
+ */
+export type IgnoreMatcher = ((absolutePath: string) => boolean) | undefined
+
+/**
  * Discover prompt files at the given target.
  *
  * - A single file is accepted as-is if it matches a prompt extension.
@@ -49,11 +64,18 @@ export interface DiscoveryResult {
  * decision.
  *
  * @param target A repository-relative or absolute file/directory path.
+ * @param ignore Optional matcher derived from `config.ignore` patterns
+ *   that drops files whose absolute path matches the pattern.
  */
-export async function discoverPrompts(target: string): Promise<DiscoveryResult> {
+export async function discoverPrompts(
+  target: string,
+  ignore?: IgnoreMatcher,
+): Promise<DiscoveryResult> {
   let info: Awaited<ReturnType<typeof stat>>
+  let resolvedTarget: string
   try {
-    info = await stat(target)
+    resolvedTarget = path.resolve(target)
+    info = await stat(resolvedTarget)
   } catch {
     return { prompts: [], errors: [`Path does not exist or is not accessible: ${target}`] }
   }
@@ -62,12 +84,12 @@ export async function discoverPrompts(target: string): Promise<DiscoveryResult> 
   const errors: string[] = []
 
   if (info.isFile()) {
-    const format = formatForFile(target)
-    if (format !== null) {
-      prompts.push({ path: normalizeSlashes(target), format })
+    const format = formatForFile(resolvedTarget)
+    if (format !== null && !isIgnored(resolvedTarget, ignore)) {
+      prompts.push({ path: normalizeSlashes(resolvedTarget), format })
     }
   } else if (info.isDirectory()) {
-    await walkDirectory(target, prompts, errors)
+    await walkDirectory(resolvedTarget, prompts, errors, ignore)
   } else {
     // Sockets, FIFOs, etc. — nothing for PromptLint to do here.
     errors.push(`Path is neither a file nor a directory: ${target}`)
@@ -86,6 +108,7 @@ async function walkDirectory(
   dir: string,
   prompts: DiscoveredPrompt[],
   errors: string[],
+  ignore?: IgnoreMatcher,
 ): Promise<void> {
   let entries: Dirent[]
   try {
@@ -100,17 +123,21 @@ async function walkDirectory(
       if (IGNORED_DIRECTORY_NAMES.has(entry.name)) {
         continue
       }
-      await walkDirectory(path.join(dir, entry.name), prompts, errors)
+      await walkDirectory(path.join(dir, entry.name), prompts, errors, ignore)
       continue
     }
     if (entry.isFile()) {
       const fullPath = path.join(dir, entry.name)
       const format = formatForFile(entry.name)
-      if (format !== null) {
+      if (format !== null && !isIgnored(fullPath, ignore)) {
         prompts.push({ path: normalizeSlashes(fullPath), format })
       }
     }
   }
+}
+
+function isIgnored(absolutePath: string, ignore?: IgnoreMatcher): boolean {
+  return ignore ? ignore(absolutePath) : false
 }
 
 /**

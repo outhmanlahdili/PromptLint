@@ -1,8 +1,14 @@
 import { readFile } from "node:fs/promises"
 import path from "node:path"
+import {
+  type IgnoreMatcher as ConfigIgnoreMatcher,
+  createIgnoreMatcher,
+  loadConfig,
+  resolveRulesAgainstManifest,
+} from "@promptlint/config"
 import { parsePrompt } from "@promptlint/parser"
 import { runEngine } from "@promptlint/rule-engine"
-import { getImplementedRules } from "@promptlint/rules"
+import { RULES_MANIFEST, getImplementedRules } from "@promptlint/rules"
 import type { Finding, PromptFile, Severity } from "@promptlint/types"
 import { SEVERITY_WEIGHT } from "@promptlint/types"
 import { discoverPrompts } from "./discover.js"
@@ -31,7 +37,7 @@ export interface LintOutcome extends CliResult {
 /**
  * Run the full PromptLint pipeline against `targetPath`:
  *
- *   discover → read → parse → runEngine → render → exitCode
+ *   loadConfig → merge CLI overrides → discover → read → parse → runEngine → render → exitCode
  *
  * This function performs all I/O (filesystem, parsing, engine) but does
  * NOT write to `process.stdout`/`stderr` or call `process.exit`. It
@@ -40,23 +46,55 @@ export interface LintOutcome extends CliResult {
  * the integration tests hermetic: they call `lint` directly and assert on
  * the returned strings.
  *
+ * Configuration lookup starts at `process.cwd()` - the caller's working
+ * directory - not the target path. This matches the spec's lookup order
+ * ("Starting from the working directory") and lets a parent-directory
+ * config affect a sub-directory scan.
+ *
  * Failure modes:
  * - **Missing/unreadable target or discovery errors** → exit code 2
  *   (`Unexpected`), human-readable message on stderr, empty stdout.
+ * - **Invalid configuration** → exit code 2, a clear `ConfigError`
+ *   message naming the offending file (loader layer owns the message).
  * - **Parser errors** (e.g. malformed frontmatter) → surfaced as
  *   `parser/parse-error` findings at severity `error`; the file is still
  *   linted by the rule set.
+ * - **Unknown rule references in the user's config** → reported on
+ *   stderr but the scan still runs with the known portion of the
+ *   config applied.
  * - **Unexpected exceptions** (parse throw, engine throw) → caught and
  *   reported as exit code 2.
  */
 export async function lint(targetPath: string, options: ResolvedOptions): Promise<LintOutcome> {
-  const discovery = await discoverPrompts(targetPath)
+  let configResult: Awaited<ReturnType<typeof loadConfig>>
+  try {
+    configResult = await loadConfig(process.cwd())
+  } catch (err: unknown) {
+    return fatal(options, err instanceof Error ? err.message : String(err))
+  }
 
+  // The merged config from `@promptlint/config` always populates
+  // `ignore` (with the default when the user omits it), but Zod's
+  // `.optional()` produces a `string[] | undefined` output type. The
+  // runtime shape is guaranteed non-undefined by {@link mergeConfig}, so
+  // widen with a cast here.
+  const ignorePatterns = (configResult.config.ignore ?? []) as readonly string[]
+  const ignoreMatcher: ConfigIgnoreMatcher = createIgnoreMatcher(ignorePatterns)
+  const resolved = resolveRulesAgainstManifest(configResult.config.rules, RULES_MANIFEST)
+
+  // CLI flags always beat config so the user can override on the command
+  // line without editing the config file.
+  const effectiveFailOn = options.failOn
+  const effectiveFormat = options.format
+
+  const unknownWarnings = formatUnknownRuleWarnings(resolved.unknown, configResult.filePath)
+
+  const discovery = await discoverPrompts(targetPath, ignoreMatcher)
   if (discovery.errors.length > 0) {
     return fatal(options, discovery.errors.join("\n"))
   }
   if (discovery.prompts.length === 0) {
-    return emptyScan(options)
+    return renderEmpty(targetPath, options, unknownWarnings)
   }
 
   try {
@@ -67,6 +105,12 @@ export async function lint(targetPath: string, options: ResolvedOptions): Promis
     const engine = await runEngine({
       rules: [...getImplementedRules()],
       files,
+      ...(Object.keys(resolved.ruleSeverity).length === 0
+        ? {}
+        : { ruleSeverity: { ...resolved.ruleSeverity } }),
+      ...(Object.keys(resolved.ruleOptions).length === 0
+        ? {}
+        : { ruleOptions: { ...resolved.ruleOptions } }),
     })
 
     const findings: readonly Finding[] = [...parserFindings, ...engine.findings]
@@ -75,18 +119,66 @@ export async function lint(targetPath: string, options: ResolvedOptions): Promis
       fileCount: engine.stats.fileCount,
       ruleCount: engine.stats.ruleCount,
       durationMs: engine.stats.durationMs,
-      options,
+      options: { ...options, format: effectiveFormat },
     })
 
-    const exitCode = computeExitCode(findings, options.failOn)
+    const exitCode = computeExitCode(findings, effectiveFailOn)
 
-    if (options.quiet && exitCode === ExitCode.Success) {
-      return { exitCode, stdout: "", stderr: "" }
-    }
-    return { exitCode, stdout: report.stdout, stderr: report.stderr }
+    const stdout = options.quiet && exitCode === ExitCode.Success ? "" : report.stdout
+    const stderr = combineStderr(report.stderr, unknownWarnings)
+
+    return { exitCode, stdout, stderr }
   } catch (err: unknown) {
     return fatal(options, unexpectedMessage(err))
   }
+}
+
+/**
+ * Render the empty-prompt-files case. Honors `--quiet`: silent on
+ * success, still surfaces unknown-rule warnings and the config-file
+ * banner.
+ */
+function renderEmpty(_targetPath: string, options: ResolvedOptions, warnings: string): LintOutcome {
+  const report = renderReport({
+    findings: [],
+    fileCount: 0,
+    ruleCount: 0,
+    durationMs: 0,
+    options: { ...options },
+  })
+  if (options.quiet) {
+    return { exitCode: ExitCode.Success, stdout: "", stderr: warnings }
+  }
+  return {
+    exitCode: ExitCode.Success,
+    stdout: report.stdout,
+    stderr: combineStderr(report.stderr, warnings),
+  }
+}
+
+function combineStderr(reportStderr: string, warnings: string): string {
+  if (warnings.length === 0) return reportStderr
+  return reportStderr.length === 0 ? warnings : `${reportStderr}${warnings}`
+}
+
+/**
+ * Format a stderr warning block for unknown rule ids. Returning an empty
+ * string means "no warnings"; a multi-line block ends with a newline.
+ */
+function formatUnknownRuleWarnings(
+  unknown: readonly { ruleId: string; severity: string; options?: unknown }[],
+  configFilePath: string | null,
+): string {
+  if (unknown.length === 0) return ""
+  const header =
+    configFilePath === null
+      ? "Warning: unknown rule references in resolved configuration:"
+      : `Warning: unknown rule references in ${configFilePath}:`
+  const lines = unknown.map((u) => {
+    const optionsSuffix = u.options === undefined ? "" : ` (options: ${JSON.stringify(u.options)})`
+    return `  - ${u.ruleId} [${u.severity}]${optionsSuffix}`
+  })
+  return `${header}\n${lines.join("\n")}\n`
 }
 
 /**
@@ -168,26 +260,6 @@ export function computeExitCode(
     }
   }
   return ExitCode.Success
-}
-
-/**
- * Build the result for a scan that found zero prompt files. This is a
- * clean success (exit 0) — the user pointed PromptLint at a directory
- * that simply contains no prompts — but we still surface a message so the
- * output is not empty. `--quiet` suppresses it.
- */
-function emptyScan(options: ResolvedOptions): LintOutcome {
-  const report = renderReport({
-    findings: [],
-    fileCount: 0,
-    ruleCount: 0,
-    durationMs: 0,
-    options,
-  })
-  if (options.quiet) {
-    return { exitCode: ExitCode.Success, stdout: "", stderr: "" }
-  }
-  return { exitCode: ExitCode.Success, stdout: report.stdout, stderr: report.stderr }
 }
 
 /**

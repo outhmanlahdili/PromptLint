@@ -27,6 +27,7 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
+    "@promptlint/config": "workspace:*",
     "@promptlint/parser": "workspace:*",
     "@promptlint/reporter-human": "workspace:*",
     "@promptlint/reporter-json": "workspace:*",

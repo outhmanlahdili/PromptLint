@@ -2,7 +2,7 @@
   "name": "@promptlint/config",
   "version": "0.0.0",
   "private": true,
-  "description": "Configuration loader for `.promptlintrc.json` (Phase 1 implementation). V1 ships its public surface and Zod schema only.",
+  "description": "Configuration loader for `promptlint.config.{ts,json}` (Phase 5). Validates with Zod and exposes rule-severity and rule-option overrides.",
   "license": "MIT",
   "type": "module",
   "main": "./src/index.ts",
@@ -25,12 +25,14 @@
   },
   "dependencies": {
     "@promptlint/types": "workspace:*",
+    "picomatch": "2.3.2",
     "zod": "3.24.1"
   },
   "devDependencies": {
     "@promptlint/biome-config": "workspace:*",
     "@promptlint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
+    "@types/picomatch": "4.0.3",
     "typescript": "5.7.2",
     "vitest": "2.1.8"
   }

@@ -3,11 +3,13 @@
 PromptLint command-line interface. Lint your prompts. Catch regressions
 before your users do.
 
-## Phase 4 status — complete
+## Phase 5 status — complete
 
-The CLI wires the full PromptLint pipeline end-to-end: file discovery →
-parsing → rule engine → reporting. It is usable from the terminal via the
-`promptlint` bin.
+The CLI wires the full PromptLint pipeline end-to-end (file discovery →
+parsing → rule engine → reporting) and consumes `@promptlint/config`
+for the user's resolved configuration. Configuration influences
+`failOn`, `format`, `ignore` patterns, and per-rule severity plus
+options; command-line flags always take precedence over the config.
 
 ## Quick start
 
@@ -99,7 +101,8 @@ Run `promptlint --help` for the full usage reference.
 
 ## Ignored directories
 
-When scanning a directory, the CLI automatically skips:
+When scanning a directory, the CLI automatically skips these default
+directories (matches by base name rather than path):
 
 - `node_modules/`
 - `.git/`
@@ -107,27 +110,79 @@ When scanning a directory, the CLI automatically skips:
 - `build/`
 - `coverage/`
 
+Additional paths can be skipped via a `promptlint.config.{ts,json}`
+file's `ignore` array (gitignore-style globs):
+
+```jsonc
+{
+  "ignore": [
+    "dist/**",
+    "coverage/**",
+    "generated/**"
+  ]
+}
+```
+
+See [`packages/config/README.md`](../../packages/config/README.md) for
+the full configuration schema.
+
 ## Exit codes
 
 | Code | Meaning |
 |---|---|
-| `0` | No findings above the `--fail-on` threshold. |
-| `1` | One or more findings at or above `--fail-on`. |
-| `2` | Invalid invocation, unreadable target, or runtime error. |
+| `0` | No findings above the threshold (CLI flag or config `failOn`). |
+| `1` | One or more findings at or above the threshold. |
+| `2` | Invalid invocation, unreadable target, invalid configuration, or runtime error. |
+
+## Configuration
+
+The CLI loads `promptlint.config.{ts,json}` from the caller's working
+directory before resolving any CLI flags. The full schema and lookup
+behaviour are documented in
+[`packages/config/README.md`](../../packages/config/README.md). A
+minimal example:
+
+```jsonc
+// promptlint.config.json
+{
+  "failOn": "warning",
+  "format": "human",
+  "ignore": ["dist/**", "coverage/**"],
+  "rules": {
+    "structure/missing-model": "off",
+    "quality/missing-output-schema": "error",
+    "cost/high-token-estimate": {
+      "severity": "warning",
+      "options": { "maxTokens": 4000 }
+    }
+  }
+}
+```
+
+CLI flags always win: `pnpm promptlint check . --fail-on error --format json`
+applies `error` as the threshold and `json` as the format regardless
+of the config file. Anything else (`ignore` patterns, rule severities,
+rule options) flows from the config file into the engine.
+
+Invalid configuration produces a `ConfigError`, prints a message on
+stderr naming the offending file, and exits with code 2.
 
 ## Architecture
 
 ```
-bin/promptlint.ts        ← tsx launcher (shebang, argv → runCli)
+bin/promptlint.ts          ← tsx launcher (shebang, argv → runCli)
+scripts/run-cli.mjs        ← root launcher (in repo root, used by pnpm promptlint …)
 src/
-  cli.ts                 ← runCli: dispatches help/version/check
-  options.ts             ← parseCliArgs via node:util parseArgs
-  discover.ts            ← recursive file walker, ignore-list pruning
-  lint.ts                ← discover → read → parse → runEngine → exitCode
-  reporter.ts            ← format selection (human / json)
-  help.ts                ← --help text and --version reader
-  types.ts               ← CliResult, ResolvedOptions, ExitCode
-  index.ts               ← public API surface
+  cli.ts                   ← runCli: dispatches help/version/check
+  options.ts               ← parseCliArgs via node:util parseArgs
+  discover.ts              ← recursive file walker, hard-coded ignores,
+                              optional user-supplied ignore matcher
+  lint.ts                  ← loadConfig → discover → read → parse →
+                              runEngine → render → exitCode
+  reporter.ts              ← format selection (human / json)
+  help.ts                  ← --help text and --version reader
+  types.ts                 ← CliResult, ResolvedOptions, ExitCode
+  index.ts                 ← public API surface
 ```
 
 The bin shim and `runCli` never perform business logic. Every decision
@@ -139,6 +194,10 @@ flows through the orchestrator (`lint.ts`) which returns a structured
 - **`src/cli.test.ts`** — 32 integration tests: argument validation,
   single-file and directory linting, exit codes, output formats,
   `--quiet`, `--no-color`, parser failures, ignored directories.
+- **`src/cli.config.test.ts`** — 10 integration tests: config loading
+  (JSON, parent-directory walk), precedence (CLI flag > config),
+  default fallback, `ignore` patterns, rule severity & option
+  overrides, invalid config handling, unknown-rule warnings.
 - **`src/bin.smoke.test.ts`** — 6 subprocess smoke tests: real `tsx`
   bin launch proving terminal usability.
 

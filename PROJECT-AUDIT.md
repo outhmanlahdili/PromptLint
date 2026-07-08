@@ -270,3 +270,81 @@ This document tracks the architectural decisions, implementation milestones, and
 - **Known limitations**: The launcher assumes `INIT_CWD` is honored by pnpm. If a future pnpm release renames or removes it, the fallback to `process.cwd()` covers only the no-pnpm case; a one-line patch to add `--dir <cwd>` style behavior would be enough to recover.
 - **Recommendation for Phase 5**: Unchanged from the Phase 4 entry above.
 
+
+## Phase 5: Configuration System
+- **Status**: Completed
+- **Timestamp**: 2026-07-08 18:55 +01:00
+- **Objectives completed**:
+    - Implemented `promptlint.config.{ts,json}` lookup that walks upward from `process.cwd()` to the filesystem root.
+    - Zod-validated the full schema (`failOn`, `format`, `ignore`, `rules`) with strict mode - unknown top-level keys raise a clear error.
+    - Built the rule resolver (`resolveRules` / `resolveRulesAgainstManifest`) which turns the user's `rules` block into the engine's `ruleSeverity` + `ruleOptions` inputs. Unknown rule ids are collected separately and surfaced as a stderr warning; the scan still runs.
+    - Built the ignore matcher (`createIgnoreMatcher`) on top of picomatch with normalization so that user-supplied relative globs (`dist/**`) match any descendant at any depth.
+    - Wired `@promptlint/config` into the CLI: `discover.ts` accepts an `IgnoreMatcher`, `lint.ts` loads the config in `process.cwd()`, applies CLI-flag overrides for `format` and `failOn`, and forwards `ruleSeverity` + `ruleOptions` to `runEngine`.
+    - 66 new tests in `@promptlint/config` (`schema.ts`, `loader.ts`, `merge.ts`, `matchers.ts`, `resolve.ts`), and 10 new CLI integration tests in `apps/cli/src/cli.config.test.ts` exercising the wired-up pipeline through `runCli`.
+    - Documentation: rewrote `packages/config/README.md`, updated `apps/cli/README.md` and the root `README.md` status block, appended this entry.
+- **Files added**:
+    - `packages/config/src/schema.ts` - Zod schema, `PromptlintConfigInput` / `PromptlintConfigOutput` / `PromptlintConfig` types.
+    - `packages/config/src/loader.ts` - `loadConfig` and parent-directory walk; JSON & TS loaders; single `ConfigError`.
+    - `packages/config/src/merge.ts` - `mergeConfig` over `DEFAULT_CONFIG` (always allocates fresh `ignore` and `rules`).
+    - `packages/config/src/defaults.ts` - `DEFAULT_CONFIG` (frozen).
+    - `packages/config/src/errors.ts` - `ConfigError`.
+    - `packages/config/src/matchers.ts` - `IgnoreMatcher` and `createIgnoreMatcher` (path-tail matching for relative globs).
+    - `packages/config/src/resolve.ts` - `resolveRules`, `resolveRulesAgainstManifest`, `UnknownRuleReference`.
+    - `packages/config/src/index.test.ts` - rewritten schema tests (28 tests).
+    - `packages/config/src/loader.test.ts` - 12 tests (JSON, TS, missing, invalid, parent walk, precedence).
+    - `packages/config/src/merge.test.ts` - 8 tests (freezes, mapping, defaults).
+    - `packages/config/src/matchers.test.ts` - 10 tests (depth, absolute paths, normalization).
+    - `packages/config/src/resolve.test.ts` - 8 tests (rules, options, unknown handling).
+    - `apps/cli/src/cli.config.test.ts` - 10 integration tests (default fallback, ignore, severity, options, CLI override, parent walk, invalid config, unknown rule warning).
+- **Files modified**:
+    - `packages/config/package.json` - added `picomatch@2.3.2` and `@types/picomatch@4.0.3`; updated description to reflect Phase 5.
+    - `packages/config/src/index.ts` - rewritten to export the full public surface (Phase 0 surface + new helpers + resolver).
+    - `packages/config/src/index.test.ts` - rewritten to test the new schema (Phase 0 schema tests were stale and replaced).
+    - `apps/cli/package.json` - added `@promptlint/config` to dependencies.
+    - `apps/cli/src/discover.ts` - accepts an optional `IgnoreMatcher` parameter; default behavior unchanged.
+    - `apps/cli/src/lint.ts` - loads config, builds an ignore matcher, forwards `ruleSeverity` + `ruleOptions` to the engine; `--format` / `--fail-on` continue to take precedence; `ConfigError` becomes exit 2; unknown-rule warnings surface on stderr without aborting.
+    - `README.md` (root) - status block updated to Phase 5 with new row in the phase table.
+    - `apps/cli/README.md` - configuration section, ignored directories subsection (combines fixed + user-supplied), updated tests list, Phase 5 status line, updated architecture diagram.
+    - `packages/config/README.md` - rewritten from the Phase 0 stub to a full Phase 5 reference.
+    - `PROJECT-AUDIT.md` - this entry.
+- **Public APIs introduced**:
+    - `loadConfig(cwd): Promise<LoadConfigResult>` where `LoadConfigResult = { config: PromptlintConfig, filePath: string | null }`.
+    - `mergeConfig(input: PromptlintConfigInput): PromptlintConfig`.
+    - `DEFAULT_CONFIG: Readonly<PromptlintConfig>`.
+    - `ConfigError` (extends `Error`, name `"ConfigError"`).
+    - `IgnoreMatcher = (absolutePath: string) => boolean`.
+    - `createIgnoreMatcher(patterns: readonly string[]): IgnoreMatcher`.
+    - `resolveRules(ruleConfig, knownRuleIds): ResolvedRules`.
+    - `resolveRulesAgainstManifest(ruleConfig, manifest): ResolvedRules`.
+    - `ResolvedRules` includes `ruleSeverity`, `ruleOptions`, `unknown` rules.
+    - Schema exports: `promptlintConfigSchema`, `ruleConfigSchema`, `ruleSeveritySchema`.
+    - Type exports: `PromptlintConfig`, `PromptlintConfigInput`, `PromptlintConfigOutput`, `RuleConfig`, `RuleSeverity`.
+- **Architectural decisions**:
+    - **Single loader, single schema, single error.** There is exactly one way to load and validate a config (`loadConfig`), exactly one Zod schema (`promptlintConfigSchema`), and exactly one error type (`ConfigError`). The CLI catches that exception at the orchestrator boundary and turns it into exit code 2 - so the CLI never embeds Zod-specific code or its own validate-and-defaults logic.
+    - **CLI flags override config.** `--format` and `--fail-on` always win; the rest of the config (ignore globs, rule severities, rule options, options for `cost/high-token-estimate`) drives engine behavior. This matches established linter UX where flags override project config.
+    - **Strict schema, unknown-rule warning on stderr.** Schema is `.strict()` so unknown top-level keys fail with an explicit message; unknown rule ids in `rules` are collected separately and reported on stderr (`Warning: unknown rule references in ...`). This means a typo in a rule id is still loud but does not fail a scan.
+    - **Path-tail matching for ignore globs.** The matcher tests picomatch against the absolute path and against each leading-segment tail, so user-supplied globs like `dist/**` work uniformly for `/repo/dist/x.prompt.md`, `C:/repo/dist/x.prompt.md`, and `dist/x.prompt.md`. We avoid the alternative of forcing users to write `**/dist/**` because that pattern is not exercised in the spec's example.
+    - **`resolveRulesAgainstManifest` decouples config from rules.** The config package depends only on the structural shape `{ id: string }`, not on `@promptlint/rules` directly. The CLI passes `RULES_MANIFEST` to bridge the two.
+    - **`runCli` stays untouched.** All config integration lives in `lint.ts`. `cli.ts` still calls `lint(target, options)` with the same signature - the function signature gained nothing, and `process.chdir` is never invoked from the CLI (CWD preservation remains the launcher's job).
+- **Tests added**: 76 new tests in this phase
+    - `@promptlint/config`: 28 schema + 12 loader + 8 merge + 10 matcher + 8 resolver = 66 tests
+    - `@promptlint/cli`: 10 config integration tests
+    - `@promptlint/rules`: unchanged (47 tests still pass).
+    - `@promptlint/parser`, `@promptlint/rule-engine`, `@promptlint/types`, `@promptlint/test-utils`, `@promptlint/reporter-{human,json}`: unchanged.
+- **Verification results**:
+    - `pnpm format:check` - green (151 files).
+    - `pnpm lint` - green.
+    - `pnpm typecheck` - green.
+    - `pnpm test:run` - green (48 tests in CLI including 32 existing + 10 new config + 6 bin smoke + config package's 66 tests).
+    - `pnpm build` - green.
+    - `pnpm verify` - green end-to-end (110 turbo tasks successful across format / lint / typecheck / test / build).
+- **Technical debt**:
+    - The TS config file is loaded with `await import(pathToFileURL(filePath).href)` which goes through Node's loader with `tsx` already installed in the package (`@promptlint/parser`, `@promptlint/types` etc. are visible). For a more robust future, we could ship a small TypeScript transpiler (e.g. `jiti`) inside `@promptlint/config` and drop the workspace dependency - but Phase 5 reused the existing tsx-resolved loader path the CLI already uses, which keeps the surface narrow.
+    - `mergeConfig` allocates a fresh `ignore` array and `rules` object on every call. This is unnecessary for the CLI's single load per scan but useful for safety in tests. Future plan: freeze the merged object and mark `mergeConfig` as pure.
+    - `schema.ts` carries a `.strict()` check. If we ever add a configuration-versioning field (e.g. `version: 2`), the schema will reject unknown V2 keys - we'll need to bump schema versioning first.
+- **Known limitations**:
+    - Glob patterns are matched against the absolute path of each file. Behaviour is anchored at the path-tail so a pattern like `dist/**` matches anything named `dist` at any depth, but a pattern that begins with `**/foo/**` is indistinguishable from `foo/**`. We document the resolved behaviour in `packages/config/README.md` so users can predict it.
+    - The CLI's `--format` and `--fail-on` flags override the config but there is no `--config` flag to point at a non-cwd config (yet). Phase 6+ can add that if needed.
+    - Unknown-rule warnings are decorative - they do not appear when `--quiet` suppresses output. A future Phase 6 could route unknown-rule warnings to a dedicated channel so they survive `--quiet`.
+- **Recommendation for Phase 6**: Review what additional knobs the team wants (e.g. pre-rule plugins, per-directory `promptlint.config.json` overrides of file-by-file ignore lists, or remote-loaded config), and decide whether the strict schema is still appropriate once fields like `extends` are introduced. Until then the current public surface is the standing contract.
+
