@@ -36,7 +36,7 @@
     "@biomejs/biome": "1.9.4",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.28.1",
-    "@commitlint/cli": "19.6.1",
+    "@commitlint/cli": "21.2.1",
     "@commitlint/config-conventional": "19.6.0",
     "@types/node": "20.17.10",
     "husky": "9.1.7",
