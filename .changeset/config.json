@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "outhmanlahdili/PromtLint",
+      "repo": "outhmanlahdili/PromptLint",
       "user": "outhmanlahdili"
     }
   ],

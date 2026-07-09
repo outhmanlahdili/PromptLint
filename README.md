@@ -2,7 +2,7 @@
 
 > Lint your LLM prompts. Catch regressions before your users do.
 
-[![Build Status](https://github.com/outhmanlahdili/PromtLint/workflows/CI/badge.svg)](https://github.com/outhmanlahdili/PromtLint/actions)
+[![Build Status](https://github.com/outhmanlahdili/PromptLint/workflows/CI/badge.svg)](https://github.com/outhmanlahdili/PromptLint/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pnpm](https://img.shields.io/badge/package%20manager-pnpm-blue.svg)](https://pnpm.io/)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-green.svg)](https://nodejs.org/)
@@ -44,8 +44,8 @@ bun add -d @promptlint/cli
 Prerequisites: Node.js `>=20.0.0`, pnpm `>=9.0.0`.
 
 ```bash
-git clone https://github.com/outhmanlahdili/PromtLint.git
-cd PromtLint
+git clone https://github.com/outhmanlahdili/PromptLint.git
+cd PromptLint
 pnpm install
 pnpm verify
 ```

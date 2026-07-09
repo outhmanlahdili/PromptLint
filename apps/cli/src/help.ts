@@ -57,7 +57,7 @@ EXIT CODES
   2   Invalid invocation, invalid configuration, or unexpected runtime error.
 
 PromptLint ignores node_modules, .git, dist, build, and coverage when
-scanning directories. See https://github.com/outhmanlahdili/PromtLint
+scanning directories. See https://github.com/outhmanlahdili/PromptLint
 for the full guide and docs/rules.md for details of each rule.
 `
 
