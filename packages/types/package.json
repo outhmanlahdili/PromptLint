@@ -12,7 +12,7 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "!**/*.tsbuildinfo"],
   "scripts": {
     "lint": "biome check src",
     "lint:fix": "biome check --write src",

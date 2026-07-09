@@ -15,6 +15,7 @@
   "bin": {
     "promptlint": "./bin/promptlint.ts"
   },
+  "files": ["src", "bin", "!src/**/*.test.ts", "!src/**/*.spec.ts", "!**/*.tsbuildinfo"],
   "scripts": {
     "lint": "biome check src bin",
     "lint:fix": "biome check --write src bin",
