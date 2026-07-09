@@ -1,123 +1,119 @@
 # Contributing to PromptLint
 
-Thank you for your interest in contributing to PromptLint! This guide
-describes how to set up a development environment, the workflow we
-follow, and the conventions every PR is expected to honor.
+Thank you for your interest in contributing to PromptLint! We welcome all contributions, whether you're fixing a bug, proposing a new rule, or improving the documentation.
 
-## Code of Conduct
+This guide describes how to set up your development environment, the workflow we follow, and the conventions expected for all pull requests.
 
-All participants are expected to follow our
-[Code of Conduct](./CODE_OF_CONDUCT.md). Please read it before
-contributing.
+## 📜 Code of Conduct
 
-## Development environment
+All participants are expected to follow our [Code of Conduct](./CODE_OF_CONDUCT.md). Please read it before contributing to ensure a welcoming and inclusive environment for everyone.
+
+## 🛠 Development Environment
 
 ### Prerequisites
 
-- Node.js `>=20`
-- pnpm `>=9` (the repo pins `pnpm@9.15.4` via `packageManager`)
-- Git
+- **Node.js**: `>=20.0.0` (LTS recommended)
+- **pnpm**: `>=9.0.0` (The repository pins `pnpm@9.15.4` via `packageManager`)
+- **Git**: Latest stable version
 
 ### Setup
 
 ```bash
-wwgit clone https://github.com/outhmanlahdili/PromptLint.git
+# Clone the repository
+git clone https://github.com/outhmanlahdili/PromptLint.git
 cd PromptLint
+
+# Install dependencies
 pnpm install
-pnpm prepare        # installs Husky hooks
-pnpm verify         # runs format:check, lint, typecheck, test:run, build
+
+# Install Husky hooks
+pnpm prepare
+
+# Run full verification
+pnpm verify
 ```
 
-You should see a green build locally before opening a pull request.
+`pnpm verify` executes the complete quality gate: `format:check`, `lint`, `typecheck`, `test:run`, and `build`. You should see a green build locally before opening a pull request.
 
-## Project layout
+---
 
-PromptLint is a [Turborepo](https://turbo.build/) + pnpm monorepo.
-Workspaces live under `apps/`, `packages/`, `tooling/`, and
-`examples/`. See the [README](./README.md) for the full layout.
+## 📂 Project Layout
 
-Every workspace package follows the same conventions:
+PromptLint is a [Turborepo](https://turbo.build/) + pnpm monorepo. Workspaces are organized as follows:
 
-- `package.json` exposes `lint`, `lint:fix`, `typecheck`, `test`,
-  `test:run`, `build`, `clean`, and `topo` scripts.
-- `tsconfig.json` extends `@prompt-lint/tsconfig/base.json`.
-- `tsconfig.build.json` extends `@prompt-lint/tsconfig/build.json`.
-- `biome.json` extends `@prompt-lint/biome-config/biome.json`.
-- `vitest.config.ts` configures Vitest for Node.
+- `apps/cli`: The core command-line interface.
+- `apps/docs`: Documentation site and rule manifest.
+- `packages/`: Core logic (parser, rule-engine, rules, types, reporters).
+- `tooling/`: Shared configuration presets (biome, tsconfig).
+- `examples/`: Minimal examples for testing and documentation.
 
-## Development workflow
+### Workspace Conventions
 
-1. Create a feature branch from `main`:
+Every workspace package follows a consistent script interface:
+- `pnpm lint` / `pnpm lint:fix`: Biome-based linting.
+- `pnpm typecheck`: TypeScript type validation.
+- `pnpm test:run`: Vitest execution.
+- `pnpm build`: Production artifact generation.
+
+---
+
+## 🚀 Development Workflow
+
+1. **Create a Branch**: Start from `main` using a descriptive name.
    ```bash
-   git switch -c feat/my-change
+   git switch -c feat/add-new-rule
    ```
-2. Make your changes. Run `pnpm verify` early to surface errors.
-3. Add a changeset with `pnpm changeset`. Choose the affected
-   packages and pick `patch` / `minor` / `major` based on the
-   public API impact.
-4. Commit using a [Conventional Commits](https://www.conventionalcommits.org/)
-   header (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `build:`,
-   `ci:`, `chore:`, `revert:`). Headers are validated by
-   commitlint in the Husky `commit-msg` hook.
-5. Push your branch and open a pull request. The
-   [PR template](./.github/pull_request_template.md) will guide you.
+2. **Implement Changes**: Make your changes. Run `pnpm verify` frequently to catch issues early.
+3. **Manage Versions**: Use Changesets to track the impact of your change.
+   ```bash
+   pnpm changeset
+   ```
+   Select the affected packages and choose the semantic version bump (`patch`, `minor`, or `major`).
+4. **Commit**: Use [Conventional Commits](https://www.conventionalcommits.org/).
+   - `feat:` for new features.
+   - `fix:` for bug fixes.
+   - `docs:` for documentation changes.
+   - `refactor:` for code changes that neither fix a bug nor add a feature.
+   - `test:` for adding or correcting tests.
+   - `chore:` for maintenance.
+5. **Submit**: Push your branch and open a Pull Request using our [PR template](./.github/pull_request_template.md).
 
-## Pull request checklist
+---
 
-Before requesting review, confirm:
+## ✅ Pull Request Checklist
 
-- [ ] `pnpm format:check` passes
-- [ ] `pnpm lint` passes
-- [ ] `pnpm typecheck` passes
-- [ ] `pnpm test:run` passes
-- [ ] `pnpm build` passes
-- [ ] New code has unit tests where applicable
-- [ ] Public exports have JSDoc comments
-- [ ] A changeset is included for any user-visible change
+Before requesting a review, please confirm the following:
+- [ ] `pnpm verify` passes locally.
+- [ ] New code is covered by unit tests.
+- [ ] Public exports include JSDoc comments.
+- [ ] A changeset has been added for all user-visible changes.
+- [ ] Your commit messages follow the Conventional Commits specification.
 
-## Commit conventions
+---
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/).
-The header **must** use one of these types:
+## 🎨 Coding Style
 
-- `feat:` — a new user-facing feature
-- `fix:` — a bug fix
-- `docs:` — documentation only
-- `refactor:` — a change that neither fixes a bug nor adds a feature
-- `perf:` — performance improvement
-- `test:` — adding or correcting tests
-- `build:` — build system or external dependency change
-- `ci:` — CI configuration change
-- `chore:` — tooling or maintenance that doesn't affect production code
-- `revert:` — reverts a previous commit
+- **TypeScript**: We use strict TypeScript throughout. CommonJS is not allowed.
+- **Immutability**: Prefer `readonly` types and immutable data structures for public APIs.
+- **Type Safety**: Avoid `any`. Use `unknown` and narrow types explicitly.
+- **Documentation**: Every public export must be documented with JSDoc.
+- **Cleanliness**: No `console.log`, `debugger`, or commented-out code in commits.
 
-The header is capped at 100 characters.
+---
 
-## Coding style
+## 🐛 Reporting Issues
 
-- TypeScript everywhere (CommonJS is not allowed in this workspace).
-- Prefer `readonly` types and immutable data structures for public API
-  surfaces.
-- Avoid `any`. Use `unknown` and narrow it explicitly.
-- Do not introduce new top-level dependencies without discussion.
-- Document every public export with JSDoc.
-- Don't leave `console.log`, `debugger`, or commented-out code in
-  committed changes.
+We encourage you to use our GitHub issue templates for structured reports:
+- [Bug Report](./.github/ISSUE_TEMPLATE/bug_report.md)
+- [Feature Request](./.github/ISSUE_TEMPLATE/feature_request.md)
+- [Rule Proposal](./.github/ISSUE_TEMPLATE/feature_request.md)
 
-## Reporting issues
+---
 
-Use the GitHub issue templates:
+## 🛡 Security
 
-- [Bug report](./.github/ISSUE_TEMPLATE/bug-report.md)
-- [Feature request](./.github/ISSUE_TEMPLATE/feature-request.md)
-- [Rule proposal](./.github/ISSUE_TEMPLATE/rule-proposal.md)
+Please **do not** report security vulnerabilities via public issues. Refer to our [SECURITY.md](./SECURITY.md) for the responsible disclosure process.
 
-## Security
+## ⚖️ License
 
-Please do **not** file public issues for security vulnerabilities. See
-[SECURITY.md](./SECURITY.md) for the responsible disclosure process.
-
-## License
-
-By contributing, you agree that your contributions will be licensed
-under the [MIT License](./LICENSE).
+By contributing, you agree that your contributions will be licensed under the [MIT License](./LICENSE).
