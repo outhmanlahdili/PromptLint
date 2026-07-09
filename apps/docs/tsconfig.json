@@ -1,5 +1,5 @@
 {
-  "extends": "@promptlint/tsconfig/base.json",
+  "extends": "@prompt-lint/tsconfig/base.json",
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["dist", "node_modules", "coverage", ".astro", ".next"],
   "compilerOptions": {

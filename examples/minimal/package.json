@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/minimal-example",
+  "name": "@prompt-lint/minimal-example",
   "version": "0.0.0",
   "private": true,
   "description": "Minimal PromptLint configuration used by documentation and tests.",

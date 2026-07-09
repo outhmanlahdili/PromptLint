@@ -140,8 +140,8 @@ export interface RuleContext {
  * A lint rule definition. V1 rules are pure functions of a {@link RuleContext};
  * they do not perform I/O and must not require a network connection.
  *
- * Implementations live in `@promptlint/rules` (V1) and return a `RuleDefinition`
- * via the `defineRule` factory exported from `@promptlint/rule-engine` in
+ * Implementations live in `@prompt-lint/rules` (V1) and return a `RuleDefinition`
+ * via the `defineRule` factory exported from `@prompt-lint/rule-engine` in
  * Phase 1. The shape below is part of the stable public contract from V1.
  */
 export interface RuleDefinition<_TOptions = unknown> {

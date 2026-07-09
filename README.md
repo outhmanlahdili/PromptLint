@@ -30,13 +30,13 @@ PromptLint is architected as a TypeScript monorepo containing a high-performance
 
 ```bash
 # Global installation (recommended for CLI usage)
-npm install -g @promptlint/cli
+npm install -g @prompt-lint/cli
 
 # Project-level local installation
-pnpm add -D @promptlint/cli
-yarn add -D @promptlint/cli
-npm install --save-dev @promptlint/cli
-bun add -d @promptlint/cli
+pnpm add -D @prompt-lint/cli
+yarn add -D @prompt-lint/cli
+npm install --save-dev @prompt-lint/cli
+bun add -d @prompt-lint/cli
 ```
 
 ### For Contributors (Monorepo Bootstrap):
@@ -116,7 +116,7 @@ If neither is found, it falls back to built-in defaults.
 ### Example Configuration (`promptlint.config.ts`)
 
 ```typescript
-import type { PromptlintConfig } from "@promptlint/config";
+import type { PromptlintConfig } from "@prompt-lint/config";
 
 export default {
   // Exit non-zero at or above this level

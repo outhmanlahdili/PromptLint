@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/rule-engine",
+  "name": "@prompt-lint/rule-engine",
   "version": "1.0.0",
   "description": "Rule engine that loads, schedules, and dispatches lint rules over parsed prompt files.",
   "license": "MIT",
@@ -23,11 +23,11 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/types": "workspace:*"
+    "@prompt-lint/types": "workspace:*"
   },
   "devDependencies": {
-    "@promptlint/biome-config": "workspace:*",
-    "@promptlint/tsconfig": "workspace:*",
+    "@prompt-lint/biome-config": "workspace:*",
+    "@prompt-lint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

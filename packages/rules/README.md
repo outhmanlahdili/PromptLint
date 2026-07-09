@@ -1,4 +1,4 @@
-# `@promptlint/rules`
+# `@prompt-lint/rules`
 
 Built-in lint rules for PromptLint V1.
 
@@ -29,7 +29,7 @@ import {
   // Individual rule definitions are also re-exported by id-prefixed name.
   structureMissingModel,
   costHighTokenEstimate,
-} from "@promptlint/rules"
+} from "@prompt-lint/rules"
 
 // Returns every implemented rule in the order defined by RULES_MANIFEST.
 const rules = getImplementedRules()
@@ -48,7 +48,7 @@ fails noisily if `getImplementedRules()` ever drifts apart from it.
 ## Writing a new rule
 
 1. Place the implementation in the appropriate category subdirectory.
-2. Use `defineRule` from `@promptlint/rule-engine`.
+2. Use `defineRule` from `@prompt-lint/rule-engine`.
 3. Consume the `RuleContext` (`file`, `options`, `report`).
 4. Emit deterministic findings; the engine handles dedup and ordering.
 5. Declare options via the `options:` array when the rule accepts
@@ -62,7 +62,7 @@ fails noisily if `getImplementedRules()` ever drifts apart from it.
 ## Tests
 
 ```bash
-pnpm --filter @promptlint/rules test:run
+pnpm --filter @prompt-lint/rules test:run
 ```
 
 Every rule runs against the same harness — `src/test-helpers.ts` —

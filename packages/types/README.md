@@ -1,4 +1,4 @@
-# @promptlint/types
+# @prompt-lint/types
 
 Foundational TypeScript types for PromptLint V1.
 
@@ -8,5 +8,5 @@ no runtime logic — only types and a single frozen lookup table
 (`SEVERITY_WEIGHT`) used by the future rule engine.
 
 The shape of every interface here is part of the stable public V1 API
-within the workspace; Phase 1 will publish it under a `@promptlint/types`
+within the workspace; Phase 1 will publish it under a `@prompt-lint/types`
 package name and freeze it as a semver-stable surface.

@@ -1,4 +1,4 @@
-import type { Finding, Severity } from "@promptlint/types"
+import type { Finding, Severity } from "@prompt-lint/types"
 
 /**
  * Inputs to the human reporter. Phase 2 implements the actual ANSI

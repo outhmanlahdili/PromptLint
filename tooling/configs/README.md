@@ -1,11 +1,11 @@
-# @promptlint/configs
+# @prompt-lint/configs
 
 Shared Vite / Vitest configuration for PromptLint packages.
 
 Usage in a package `vitest.config.ts`:
 
 ```ts
-import { createVitestConfig } from "@promptlint/configs/vitest";
+import { createVitestConfig } from "@prompt-lint/configs/vitest";
 
 export default createVitestConfig();
 ```

@@ -41,35 +41,35 @@ importers:
 
   apps/cli:
     dependencies:
-      '@promptlint/config':
+      '@prompt-lint/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@promptlint/parser':
+      '@prompt-lint/parser':
         specifier: workspace:*
         version: link:../../packages/parser
-      '@promptlint/reporter-human':
+      '@prompt-lint/reporter-human':
         specifier: workspace:*
         version: link:../../packages/reporter-human
-      '@promptlint/reporter-json':
+      '@prompt-lint/reporter-json':
         specifier: workspace:*
         version: link:../../packages/reporter-json
-      '@promptlint/rule-engine':
+      '@prompt-lint/rule-engine':
         specifier: workspace:*
         version: link:../../packages/rule-engine
-      '@promptlint/rules':
+      '@prompt-lint/rules':
         specifier: workspace:*
         version: link:../../packages/rules
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../../packages/types
       tsx:
         specifier: 4.19.2
         version: 4.19.2
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -84,10 +84,10 @@ importers:
 
   apps/docs:
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -106,7 +106,7 @@ importers:
 
   packages/config:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
       picomatch:
@@ -116,10 +116,10 @@ importers:
         specifier: 3.24.1
         version: 3.24.1
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -137,17 +137,17 @@ importers:
 
   packages/parser:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
       zod:
         specifier: 3.24.1
         version: 3.24.1
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -162,14 +162,14 @@ importers:
 
   packages/reporter-human:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -184,14 +184,14 @@ importers:
 
   packages/reporter-json:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -206,14 +206,14 @@ importers:
 
   packages/rule-engine:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -228,23 +228,23 @@ importers:
 
   packages/rules:
     dependencies:
-      '@promptlint/parser':
+      '@prompt-lint/parser':
         specifier: workspace:*
         version: link:../parser
-      '@promptlint/rule-engine':
+      '@prompt-lint/rule-engine':
         specifier: workspace:*
         version: link:../rule-engine
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/test-utils':
+      '@prompt-lint/test-utils':
         specifier: workspace:*
         version: link:../test-utils
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -259,14 +259,14 @@ importers:
 
   packages/test-utils:
     dependencies:
-      '@promptlint/types':
+      '@prompt-lint/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
@@ -281,10 +281,10 @@ importers:
 
   packages/types:
     devDependencies:
-      '@promptlint/biome-config':
+      '@prompt-lint/biome-config':
         specifier: workspace:*
         version: link:../../tooling/biome-config
-      '@promptlint/tsconfig':
+      '@prompt-lint/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':

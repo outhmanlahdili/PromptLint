@@ -1,4 +1,4 @@
-import type { Finding } from "@promptlint/types"
+import type { Finding } from "@prompt-lint/types"
 import { describe, expect, it } from "vitest"
 import { serializeJson, toJsonPayload } from "./index.ts"
 

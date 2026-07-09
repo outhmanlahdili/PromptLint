@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/comprehensive-example",
+  "name": "@prompt-lint/comprehensive-example",
   "version": "0.0.0",
   "private": true,
   "description": "Comprehensive PromptLint example project showing all built-in rules.",

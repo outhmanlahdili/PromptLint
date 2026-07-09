@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/reporter-json",
+  "name": "@prompt-lint/reporter-json",
   "version": "1.0.0",
   "description": "JSON reporter for PromptLint findings (deterministic single-line payload).",
   "license": "MIT",
@@ -23,11 +23,11 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/types": "workspace:*"
+    "@prompt-lint/types": "workspace:*"
   },
   "devDependencies": {
-    "@promptlint/biome-config": "workspace:*",
-    "@promptlint/tsconfig": "workspace:*",
+    "@prompt-lint/biome-config": "workspace:*",
+    "@prompt-lint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

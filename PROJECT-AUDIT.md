@@ -80,18 +80,18 @@ This document tracks the architectural decisions, implementation milestones, and
     - `failOn` is parsed from `EngineOptions` but the engine does not act on it; the CLI will own exit-code policy.
     - No structured logging or progress reporting. The engine surfaces rule failures only via finding emission.
 - **Recommendation for Phase 3**:
-    - Implement CLI integration, wire `runEngine` against `@promptlint/parser` + `@promptlint/config`, and resolve `failOn` into a real exit-code decision.
+    - Implement CLI integration, wire `runEngine` against `@prompt-lint/parser` + `@prompt-lint/config`, and resolve `failOn` into a real exit-code decision.
     - At that point, evaluate whether to introduce bounded concurrency (`p-limit` or a hand-rolled worker pool) without sacrificing determinism.
-    - Begin populating `@promptlint/rules` with the V1 rules outlined in Phase 0.
+    - Begin populating `@prompt-lint/rules` with the V1 rules outlined in Phase 0.
 
 ## Phase 3: Built-in Rules
 - **Status**: Completed
 - **Timestamp**: 2026-07-07 20:30 +01:00
 - **Objectives completed**:
-    - Implemented every rule declared in RULES_MANIFEST via defineRule() from @promptlint/rule-engine.
+    - Implemented every rule declared in RULES_MANIFEST via defineRule() from @prompt-lint/rule-engine.
     - Reusable helpers extracted under packages/rules/src/helpers/ (regex utilities, variable inspection, filename normalization, token estimation, PII / instruction-override vocabulary, structured-data phrasing, vague-quantifier detection).
     - Public API: every rule exported by named export, plus getImplementedRules() whose order is locked by a runtime assertion against RULES_MANIFEST.
-    - Comprehensive unit tests for every rule (111 tests in @promptlint/rules; entire workspace passes 230 tests).
+    - Comprehensive unit tests for every rule (111 tests in @prompt-lint/rules; entire workspace passes 230 tests).
     - Documentation: rewrote packages/rules/README.md and appended this entry.
 - **Files added**:
     - packages/rules/src/helpers/{tokens,variables,filename,regex,pii,instruction-override,vague-quantifiers,structured-data,index}.ts.
@@ -106,7 +106,7 @@ This document tracks the architectural decisions, implementation milestones, and
 - **Files modified**:
     - packages/rules/src/index.ts: now re-exports individual rules, adds getImplementedRules(), asserts the order against RULES_MANIFEST at module-load time.
     - packages/rules/src/index.test.ts: extended to cover the new public API and frozen-return contract.
-    - packages/rules/package.json: declares the @promptlint/rule-engine, @promptlint/parser, and @promptlint/test-utils workspace deps needed by the new rule code and tests.
+    - packages/rules/package.json: declares the @prompt-lint/rule-engine, @prompt-lint/parser, and @prompt-lint/test-utils workspace deps needed by the new rule code and tests.
     - iome.json: ignored the workspace-local .opencode/ directory so the IDE/host tooling config files no longer flag the root ormat:check step.
     - packages/rules/README.md: rewritten to describe category layout, helper layer, public API, and authoring guide.
 - **Public APIs introduced**:
@@ -129,21 +129,21 @@ This document tracks the architectural decisions, implementation milestones, and
     - pnpm lint — green (20 tasks successful).
     - pnpm typecheck — green (20 tasks successful).
     - pnpm test:run — green across the workspace:
-        - @promptlint/parser 69/69
-        - @promptlint/rule-engine 29/29
-        - @promptlint/rules 111/111
-        - @promptlint/types 2/2
-        - @promptlint/test-utils 4/4
-        - @promptlint/reporter-json 4/4
-        - @promptlint/reporter-human 5/5
-        - @promptlint/config 7/7
+        - @prompt-lint/parser 69/69
+        - @prompt-lint/rule-engine 29/29
+        - @prompt-lint/rules 111/111
+        - @prompt-lint/types 2/2
+        - @prompt-lint/test-utils 4/4
+        - @prompt-lint/reporter-json 4/4
+        - @prompt-lint/reporter-human 5/5
+        - @prompt-lint/config 7/7
     - pnpm build — green (14 tasks successful, all distributions emitted).
     - pnpm verify — green end-to-end.
 - **Technical debt**:
-    - pnpm-lock.yaml was regenerated to reflect the new workspace deps (@promptlint/parser, @promptlint/rule-engine, @promptlint/test-utils in packages/rules). No transitive drift outside that package.
+    - pnpm-lock.yaml was regenerated to reflect the new workspace deps (@prompt-lint/parser, @prompt-lint/rule-engine, @prompt-lint/test-utils in packages/rules). No transitive drift outside that package.
     - Replacement of the legacy RuleManifestEntry export with a re-export from generated/manifest.ts keeps the public surface identical; downstream callers that imported the type by path continue to work because the re-export preserves the symbol.
 - **Recommendation for Phase 4**:
-    - Wire @promptlint/rules into the CLI; Phase 4 should now provide the loader that reads promptlint.config.* and resolves uleSeverity / uleOptions per rule before calling unEngine.
+    - Wire @prompt-lint/rules into the CLI; Phase 4 should now provide the loader that reads promptlint.config.* and resolves uleSeverity / uleOptions per rule before calling unEngine.
     - Evaluate bounded concurrency in the rule engine once the CLI integration is staged; determinism guarantees (uleId -> ileId lexicographic sort) still apply.
     - Begin adding config-level option schema validation now that rule options are declared.
 
@@ -161,7 +161,7 @@ This document tracks the architectural decisions, implementation milestones, and
     - `--quiet`, `--no-color`, `--format`, `--fail-on` flags wired through `parseCliArgs` to `ResolvedOptions`.
     - Test coverage: 32 integration tests in `src/cli.test.ts` (argument validation, single-file or directory linting, exit codes, both output formats, ignored directories, parser failures) plus 6 subprocess smoke tests in `src/bin.smoke.test.ts` that launch the real `tsx` bin.
     - Documentation: full rewrite of `apps/cli/README.md` (quick start, commands, options, supported formats, ignored directories, exit codes, architecture diagram, public API) and root `README.md` status refreshed to Phase 4.
-    - Developer entrypoint: a `promptlint` script in the repository root `package.json` that forwards argv to the CLI's tsx launcher (`pnpm --filter @promptlint/cli exec tsx bin/promptlint.ts`). The supported invocation is `pnpm promptlint ...`; `pnpm install` does not register a `node_modules/.bin/promptlint` shim because the `@promptlint/cli` package is private.
+    - Developer entrypoint: a `promptlint` script in the repository root `package.json` that forwards argv to the CLI's tsx launcher (`pnpm --filter @prompt-lint/cli exec tsx bin/promptlint.ts`). The supported invocation is `pnpm promptlint ...`; `pnpm install` does not register a `node_modules/.bin/promptlint` shim because the `@prompt-lint/cli` package is private.
 - **Files added**:
     - `apps/cli/bin/promptlint.ts` - tsx shebang shim; the only file that touches `process.stdout`, `process.stderr`, or `process.exit`.
     - `apps/cli/src/cli.ts` - `runCli(argv, importMetaUrl)` dispatcher.
@@ -175,13 +175,13 @@ This document tracks the architectural decisions, implementation milestones, and
     - `apps/cli/src/bin.smoke.test.ts` - 6 subprocess smoke tests covering the real bin.
 - **Files modified**:
     - `apps/cli/README.md` - rewritten from "Phase 0 status: empty scaffold" to a complete CLI guide.
-    - `apps/cli/package.json` - wired workspace dependencies (`@promptlint/parser`, `@promptlint/rule-engine`, `@promptlint/rules`, `@promptlint/reporter-human`, `@promptlint/reporter-json`, `@promptlint/types`, `tsx`); `bin` now points at `bin/promptlint.ts`; `lint` and `lint:fix` scan `src` plus `bin`; `test` and `test:run` no longer use `--passWithNoTests`.
+    - `apps/cli/package.json` - wired workspace dependencies (`@prompt-lint/parser`, `@prompt-lint/rule-engine`, `@prompt-lint/rules`, `@prompt-lint/reporter-human`, `@prompt-lint/reporter-json`, `@prompt-lint/types`, `tsx`); `bin` now points at `bin/promptlint.ts`; `lint` and `lint:fix` scan `src` plus `bin`; `test` and `test:run` no longer use `--passWithNoTests`.
     - `apps/cli/biome.json` - `include` extended to `bin/**/*` so the launcher is linted and formatted alongside the rest of the package.
     - `apps/cli/tsconfig.json` - `include` extended to `bin/**/*` so the shebang script participates in `typecheck`.
     - `apps/cli/src/index.ts` - Phase-0 empty file replaced with the full public surface (`runCli`, `lint`, `computeExitCode`, `PARSER_ERROR_RULE_ID`, `parseCliArgs`, `CliArgumentError`, `discoverPrompts`, `formatForFile`, `IGNORED_DIRECTORY_NAMES`, `renderReport`, `HELP_TEXT`, `readVersion`, `ExitCode`) plus their accompanying exported types.
     - `pnpm-lock.yaml` - regenerated to include the added CLI dependencies.
     - `README.md` (root) - status table and prose updated to Phase 4 with a `Status` column.
-    - `package.json` (root) - added a `promptlint` script that forwards argv to the CLI's tsx launcher (`pnpm --filter @promptlint/cli exec tsx bin/promptlint.ts`). This is the documented developer entrypoint because `pnpm install` does not register a `node_modules/.bin/promptlint` shim (the package is private).
+    - `package.json` (root) - added a `promptlint` script that forwards argv to the CLI's tsx launcher (`pnpm --filter @prompt-lint/cli exec tsx bin/promptlint.ts`). This is the documented developer entrypoint because `pnpm install` does not register a `node_modules/.bin/promptlint` shim (the package is private).
 - **Files deleted**:
     - None.
 - **Public APIs introduced**:
@@ -197,9 +197,9 @@ This document tracks the architectural decisions, implementation milestones, and
     - **Two-layer error model.** `runCli` never throws - every error path becomes a `CliResult` with `exitCode: Unexpected` and a stderr message; the bin shim wraps the final `await` in `.catch(...)` as a last-resort guard so no uncaught exception escapes the process.
     - **Discovery normalizes to forward slashes** so path comparison is stable across platforms; `toOsPath` re-localizes for `readFile`.
     - **Pipeline ownership of exit codes.** `computeExitCode` is the single decision point: any future reporter (or test) that needs to know whether the run failed calls this - the bin never re-derives a threshold.
-    - **Reporter layering.** `renderReport` calls into existing `@promptlint/reporter-human` and `@promptlint/reporter-json` packages unchanged; scan-level metadata (file and rule counts plus duration) is composed by the CLI rather than expanding either reporter's contract.
+    - **Reporter layering.** `renderReport` calls into existing `@prompt-lint/reporter-human` and `@prompt-lint/reporter-json` packages unchanged; scan-level metadata (file and rule counts plus duration) is composed by the CLI rather than expanding either reporter's contract.
     - **Quiet semantics.** `--quiet` only suppresses output on success (`exitCode === 0`); failures stay loud regardless of the flag so the user is never silently routed away from problems.
-    - **Developer entrypoint.** The supported invocation is `pnpm promptlint ...` (a workspace script in the root `package.json` that forwards argv to the CLI's tsx launcher). `pnpm install` does not register a `node_modules/.bin/promptlint` shim because `@promptlint/cli` is private; marketing the command as `pnpm exec promptlint` would silently fail. The root script is the single documented entrypoint; the equivalent `pnpm --filter @promptlint/cli exec tsx bin/promptlint.ts ...` long form is documented as a debugging fallback only.
+    - **Developer entrypoint.** The supported invocation is `pnpm promptlint ...` (a workspace script in the root `package.json` that forwards argv to the CLI's tsx launcher). `pnpm install` does not register a `node_modules/.bin/promptlint` shim because `@prompt-lint/cli` is private; marketing the command as `pnpm exec promptlint` would silently fail. The root script is the single documented entrypoint; the equivalent `pnpm --filter @prompt-lint/cli exec tsx bin/promptlint.ts ...` long form is documented as a debugging fallback only.
 - **Tests added**:
     - 32 integration tests in `apps/cli/src/cli.test.ts` covering help and version routing, unknown commands, missing or extra positional args, `--format` and `--fail-on` enum validation, single-file scanning, recursive directory scanning, ignored-directory pruning, empty target, both formats, `--quiet` interaction with success and failure, `--no-color`, exit codes per severity threshold, and parser-error transport.
     - 6 subprocess smoke tests in `apps/cli/src/bin.smoke.test.ts` launching the tsx bin against small fixtures: `--help`, `--version`, clean scan exit 0, finding-bearing scan exit 1, missing target exit 2, JSON output round-trip.
@@ -208,9 +208,9 @@ This document tracks the architectural decisions, implementation milestones, and
     - `pnpm lint` - green.
     - `pnpm typecheck` - green.
     - `pnpm test:run` - green; new tests co-exist with the 230 tests from earlier phases.
-    - `pnpm build` - green (`@promptlint/cli` build is a documented no-op because the package is run from source via tsx).
+    - `pnpm build` - green (`@prompt-lint/cli` build is a documented no-op because the package is run from source via tsx).
     - `pnpm verify` - green end-to-end.
-    - `pnpm promptlint --help` - green; root script forwards argv to `@promptlint/cli`'s `tsx bin/promptlint.ts` launcher and the bin prints the full usage block.
+    - `pnpm promptlint --help` - green; root script forwards argv to `@prompt-lint/cli`'s `tsx bin/promptlint.ts` launcher and the bin prints the full usage block.
 - **Technical debt**:
     - `--format` and `--fail-on` are validated against inlined allowlists; if either enum grows the strings have to be edited in two places (`types.ts` plus `options.ts`).
     - `package.json` `clean` script uses `rm -rf` (Unix-native); Windows contributors need WSL or a posix shell or the script must be ported (already noted in Phase 2).
@@ -221,7 +221,7 @@ This document tracks the architectural decisions, implementation milestones, and
     - No progress reporting for slow scans; a long directory walk is silent until completion.
     - `--no-color` is wired but the upstream human reporter is the authority for color gating; this command is plumbed through correctly only when the reporter honors it.
 - **Recommendation for Phase 5**:
-    - Introduce the `@promptlint/config` loader so `ruleSeverity` and `ruleOptions` flow from `.promptlintrc.json` into `runEngine` (the engine already accepts both shapes - they were reserved in Phase 2).
+    - Introduce the `@prompt-lint/config` loader so `ruleSeverity` and `ruleOptions` flow from `.promptlintrc.json` into `runEngine` (the engine already accepts both shapes - they were reserved in Phase 2).
     - Wire schema-validated option parsing for any rule that declares options (Phase 3's `cost/high-token-estimate` is the only option-bearing rule today, with its `maxTokens` threshold).
     - Treat the bin-launch boundary as the seam to add a real esbuild-built distribution later, replacing the `tsx` shebang with a compiled artifact for npm-published installs.
 
@@ -231,7 +231,7 @@ This document tracks the architectural decisions, implementation milestones, and
 - **Timestamp**: 2026-07-08 01:55 +01:00
 - **Trigger**: Phase 4 review reported `pnpm promptlint --help`, `pnpm promptlint --version`, and `pnpm promptlint check test.prompt.md` failing under some `pnpm install` layouts with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL: Command "tsx" not found`, plus relative paths resolving against `apps/cli/` instead of the caller's directory.
 - **Root cause**:
-    - The previous launcher (`"promptlint": "pnpm --filter @promptlint/cli exec tsx bin/promptlint.ts"`) depends on pnpm's `.bin` shim being linked for the filter's transitive dependency `tsx`. Under hoisted, dedup-to-root, or `--no-bin-links` installs that shim does not exist, so `pnpm exec tsx` aborts before the CLI ever runs.
+    - The previous launcher (`"promptlint": "pnpm --filter @prompt-lint/cli exec tsx bin/promptlint.ts"`) depends on pnpm's `.bin` shim being linked for the filter's transitive dependency `tsx`. Under hoisted, dedup-to-root, or `--no-bin-links` installs that shim does not exist, so `pnpm exec tsx` aborts before the CLI ever runs.
     - `pnpm --filter <pkg>` rewrites the spawned process's CWD to the filter's directory (`apps/cli/`) for compatibility with package scripts. The CLI resolves relative paths against `process.cwd()`, so a user running `pnpm promptlint check ./test.prompt.md` from the repo root would see "path does not exist" once the CWD slipped into `apps/cli/`.
 - **Fix shipped**:
     - New launcher `scripts/run-cli.mjs` (committed) replaces the `--filter exec` chain. It uses Node's `child_process.spawn` to re-exec the CLI's tsx-launcher directly, registering the `tsx` ESM loader via an absolute `file://` URL (`apps/cli/node_modules/tsx/dist/loader.mjs`). No `.bin` shim lookup happens, so the launcher works regardless of pnpm's link policy.
@@ -241,7 +241,7 @@ This document tracks the architectural decisions, implementation milestones, and
     - `scripts/run-cli.mjs` - the new launcher.
 - **Files modified**:
     - `package.json` (root) - replaced the launcher script line; everything else unchanged.
-    - `apps/cli/README.md` - quick-start now documents the `pnpm promptlint ...` invocation, the `INIT_CWD` resolution behavior, and the inner workings of `scripts/run-cli.mjs`. Removed the misleading long-form `pnpm --filter @promptlint/cli exec tsx ...` documentation.
+    - `apps/cli/README.md` - quick-start now documents the `pnpm promptlint ...` invocation, the `INIT_CWD` resolution behavior, and the inner workings of `scripts/run-cli.mjs`. Removed the misleading long-form `pnpm --filter @prompt-lint/cli exec tsx ...` documentation.
     - `README.md` (root) - status paragraph updated to mention the caller's working-directory preservation.
     - This `PROJECT-AUDIT.md` section appended below Phase 4.
 - **Files deleted**:
@@ -279,8 +279,8 @@ This document tracks the architectural decisions, implementation milestones, and
     - Zod-validated the full schema (`failOn`, `format`, `ignore`, `rules`) with strict mode - unknown top-level keys raise a clear error.
     - Built the rule resolver (`resolveRules` / `resolveRulesAgainstManifest`) which turns the user's `rules` block into the engine's `ruleSeverity` + `ruleOptions` inputs. Unknown rule ids are collected separately and surfaced as a stderr warning; the scan still runs.
     - Built the ignore matcher (`createIgnoreMatcher`) on top of picomatch with normalization so that user-supplied relative globs (`dist/**`) match any descendant at any depth.
-    - Wired `@promptlint/config` into the CLI: `discover.ts` accepts an `IgnoreMatcher`, `lint.ts` loads the config in `process.cwd()`, applies CLI-flag overrides for `format` and `failOn`, and forwards `ruleSeverity` + `ruleOptions` to `runEngine`.
-    - 66 new tests in `@promptlint/config` (`schema.ts`, `loader.ts`, `merge.ts`, `matchers.ts`, `resolve.ts`), and 10 new CLI integration tests in `apps/cli/src/cli.config.test.ts` exercising the wired-up pipeline through `runCli`.
+    - Wired `@prompt-lint/config` into the CLI: `discover.ts` accepts an `IgnoreMatcher`, `lint.ts` loads the config in `process.cwd()`, applies CLI-flag overrides for `format` and `failOn`, and forwards `ruleSeverity` + `ruleOptions` to `runEngine`.
+    - 66 new tests in `@prompt-lint/config` (`schema.ts`, `loader.ts`, `merge.ts`, `matchers.ts`, `resolve.ts`), and 10 new CLI integration tests in `apps/cli/src/cli.config.test.ts` exercising the wired-up pipeline through `runCli`.
     - Documentation: rewrote `packages/config/README.md`, updated `apps/cli/README.md` and the root `README.md` status block, appended this entry.
 - **Files added**:
     - `packages/config/src/schema.ts` - Zod schema, `PromptlintConfigInput` / `PromptlintConfigOutput` / `PromptlintConfig` types.
@@ -300,7 +300,7 @@ This document tracks the architectural decisions, implementation milestones, and
     - `packages/config/package.json` - added `picomatch@2.3.2` and `@types/picomatch@4.0.3`; updated description to reflect Phase 5.
     - `packages/config/src/index.ts` - rewritten to export the full public surface (Phase 0 surface + new helpers + resolver).
     - `packages/config/src/index.test.ts` - rewritten to test the new schema (Phase 0 schema tests were stale and replaced).
-    - `apps/cli/package.json` - added `@promptlint/config` to dependencies.
+    - `apps/cli/package.json` - added `@prompt-lint/config` to dependencies.
     - `apps/cli/src/discover.ts` - accepts an optional `IgnoreMatcher` parameter; default behavior unchanged.
     - `apps/cli/src/lint.ts` - loads config, builds an ignore matcher, forwards `ruleSeverity` + `ruleOptions` to the engine; `--format` / `--fail-on` continue to take precedence; `ConfigError` becomes exit 2; unknown-rule warnings surface on stderr without aborting.
     - `README.md` (root) - status block updated to Phase 5 with new row in the phase table.
@@ -324,13 +324,13 @@ This document tracks the architectural decisions, implementation milestones, and
     - **CLI flags override config.** `--format` and `--fail-on` always win; the rest of the config (ignore globs, rule severities, rule options, options for `cost/high-token-estimate`) drives engine behavior. This matches established linter UX where flags override project config.
     - **Strict schema, unknown-rule warning on stderr.** Schema is `.strict()` so unknown top-level keys fail with an explicit message; unknown rule ids in `rules` are collected separately and reported on stderr (`Warning: unknown rule references in ...`). This means a typo in a rule id is still loud but does not fail a scan.
     - **Path-tail matching for ignore globs.** The matcher tests picomatch against the absolute path and against each leading-segment tail, so user-supplied globs like `dist/**` work uniformly for `/repo/dist/x.prompt.md`, `C:/repo/dist/x.prompt.md`, and `dist/x.prompt.md`. We avoid the alternative of forcing users to write `**/dist/**` because that pattern is not exercised in the spec's example.
-    - **`resolveRulesAgainstManifest` decouples config from rules.** The config package depends only on the structural shape `{ id: string }`, not on `@promptlint/rules` directly. The CLI passes `RULES_MANIFEST` to bridge the two.
+    - **`resolveRulesAgainstManifest` decouples config from rules.** The config package depends only on the structural shape `{ id: string }`, not on `@prompt-lint/rules` directly. The CLI passes `RULES_MANIFEST` to bridge the two.
     - **`runCli` stays untouched.** All config integration lives in `lint.ts`. `cli.ts` still calls `lint(target, options)` with the same signature - the function signature gained nothing, and `process.chdir` is never invoked from the CLI (CWD preservation remains the launcher's job).
 - **Tests added**: 76 new tests in this phase
-    - `@promptlint/config`: 28 schema + 12 loader + 8 merge + 10 matcher + 8 resolver = 66 tests
-    - `@promptlint/cli`: 10 config integration tests
-    - `@promptlint/rules`: unchanged (47 tests still pass).
-    - `@promptlint/parser`, `@promptlint/rule-engine`, `@promptlint/types`, `@promptlint/test-utils`, `@promptlint/reporter-{human,json}`: unchanged.
+    - `@prompt-lint/config`: 28 schema + 12 loader + 8 merge + 10 matcher + 8 resolver = 66 tests
+    - `@prompt-lint/cli`: 10 config integration tests
+    - `@prompt-lint/rules`: unchanged (47 tests still pass).
+    - `@prompt-lint/parser`, `@prompt-lint/rule-engine`, `@prompt-lint/types`, `@prompt-lint/test-utils`, `@prompt-lint/reporter-{human,json}`: unchanged.
 - **Verification results**:
     - `pnpm format:check` - green (151 files).
     - `pnpm lint` - green.
@@ -339,7 +339,7 @@ This document tracks the architectural decisions, implementation milestones, and
     - `pnpm build` - green.
     - `pnpm verify` - green end-to-end (110 turbo tasks successful across format / lint / typecheck / test / build).
 - **Technical debt**:
-    - The TS config file is loaded with `await import(pathToFileURL(filePath).href)` which goes through Node's loader with `tsx` already installed in the package (`@promptlint/parser`, `@promptlint/types` etc. are visible). For a more robust future, we could ship a small TypeScript transpiler (e.g. `jiti`) inside `@promptlint/config` and drop the workspace dependency - but Phase 5 reused the existing tsx-resolved loader path the CLI already uses, which keeps the surface narrow.
+    - The TS config file is loaded with `await import(pathToFileURL(filePath).href)` which goes through Node's loader with `tsx` already installed in the package (`@prompt-lint/parser`, `@prompt-lint/types` etc. are visible). For a more robust future, we could ship a small TypeScript transpiler (e.g. `jiti`) inside `@prompt-lint/config` and drop the workspace dependency - but Phase 5 reused the existing tsx-resolved loader path the CLI already uses, which keeps the surface narrow.
     - `mergeConfig` allocates a fresh `ignore` array and `rules` object on every call. This is unnecessary for the CLI's single load per scan but useful for safety in tests. Future plan: freeze the merged object and mark `mergeConfig` as pure.
     - `schema.ts` carries a `.strict()` check. If we ever add a configuration-versioning field (e.g. `version: 2`), the schema will reject unknown V2 keys - we'll need to bump schema versioning first.
 - **Known limitations**:

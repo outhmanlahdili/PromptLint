@@ -1,4 +1,4 @@
-import type { PromptFrontmatter, SourceLocation } from "@promptlint/types"
+import type { PromptFrontmatter, SourceLocation } from "@prompt-lint/types"
 import { z } from "zod"
 import { parseYaml } from "./yaml.js"
 

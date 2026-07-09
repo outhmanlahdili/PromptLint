@@ -1,4 +1,4 @@
-import type { PromptFile, PromptFrontmatter } from "@promptlint/types"
+import type { PromptFile, PromptFrontmatter } from "@prompt-lint/types"
 import { type FrontmatterError, extractFrontmatter } from "./frontmatter.js"
 import { computeContentHash } from "./hash.js"
 import type { ParseError, ParseResult, RawPromptInput } from "./index.js"

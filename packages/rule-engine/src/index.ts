@@ -5,7 +5,7 @@ import type {
   RuleDefinition,
   RuleOption,
   Severity,
-} from "@promptlint/types"
+} from "@prompt-lint/types"
 
 // ---------------------------------------------------------------------------
 // Public API (Phase 0 helpers retained for backwards compatibility)
@@ -30,7 +30,7 @@ export interface EngineOptions {
   /**
    * Rule definitions registered for engine invocation. The host (CLI or
    * test) supplies these explicitly; the loader that reads them from
-   * `@promptlint/rules` lands in a later phase.
+   * `@prompt-lint/rules` lands in a later phase.
    */
   readonly rules: readonly RuleDefinition[]
 

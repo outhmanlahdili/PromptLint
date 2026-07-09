@@ -1,4 +1,4 @@
-# `@promptlint/reporter-json`
+# `@prompt-lint/reporter-json`
 
 JSON reporter.
 

@@ -1,6 +1,6 @@
-import { formatFindingsForHuman } from "@promptlint/reporter-human"
-import { serializeJson, toJsonPayload } from "@promptlint/reporter-json"
-import type { Finding } from "@promptlint/types"
+import { formatFindingsForHuman } from "@prompt-lint/reporter-human"
+import { serializeJson, toJsonPayload } from "@prompt-lint/reporter-json"
+import type { Finding } from "@prompt-lint/types"
 import type { Format, ResolvedOptions } from "./types.js"
 
 /**
@@ -29,7 +29,7 @@ export interface RenderInput {
  * - `json` emits the stable {@link toJsonPayload} shape on a single line.
  *
  * The summary line for the human reporter is composed here rather than
- * inside `@promptlint/reporter-human` so this Phase-4 module owns the
+ * inside `@prompt-lint/reporter-human` so this Phase-4 module owns the
  * the scan-level metadata (file/rule counts, duration) without expanding
  * the reporter package's contract.
  */

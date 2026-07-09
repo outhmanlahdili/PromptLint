@@ -98,7 +98,7 @@ describe("loadConfig — TypeScript", () => {
     await writeConfigFile(
       "promptlint.config.ts",
       [
-        'import type { PromptlintConfig } from "@promptlint/config"',
+        'import type { PromptlintConfig } from "@prompt-lint/config"',
         "const config: PromptlintConfig = {",
         '  failOn: "error",',
         '  format: "json",',

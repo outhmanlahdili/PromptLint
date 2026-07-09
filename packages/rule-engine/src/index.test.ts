@@ -1,4 +1,4 @@
-import type { Finding, PromptFile, RuleDefinition, Severity } from "@promptlint/types"
+import type { Finding, PromptFile, RuleDefinition, Severity } from "@prompt-lint/types"
 import { describe, expect, it } from "vitest"
 import { declaredOptions, defineRule, resolveSeverity, runEngine } from "./index.js"
 

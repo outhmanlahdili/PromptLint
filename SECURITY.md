@@ -14,7 +14,7 @@ receive security fixes.
 | ------- | ------------------ |
 | `0.x`   | :white_check_mark: |
 
-Pre-release and `0.0.x` packages published under the `@promptlint/*`
+Pre-release and `0.0.x` packages published under the `@prompt-lint/*`
 namespace receive security fixes until the corresponding package reaches
 its first stable major release. After that, only the latest minor
 release line is supported.

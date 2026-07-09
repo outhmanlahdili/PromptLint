@@ -1,4 +1,4 @@
-# `@promptlint/reporter-human`
+# `@prompt-lint/reporter-human`
 
 Human-readable terminal reporter.
 

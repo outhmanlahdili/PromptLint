@@ -1,6 +1,6 @@
-import type { PromptVariable, SourceLocation, VariableOccurrence } from "@promptlint/types"
+import type { PromptVariable, SourceLocation, VariableOccurrence } from "@prompt-lint/types"
 
-// VariableOccurrence is defined in @promptlint/types
+// VariableOccurrence is defined in @prompt-lint/types
 
 /**
  * Scans a prompt body for `{{ variable }}` references.

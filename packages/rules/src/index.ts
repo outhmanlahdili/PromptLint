@@ -1,4 +1,4 @@
-import type { RuleDefinition, RuleOption, Severity } from "@promptlint/types"
+import type { RuleDefinition, RuleOption, Severity } from "@prompt-lint/types"
 import conventionFilenameNaming from "./convention/filename-naming.js"
 import costHighTokenEstimate from "./cost/high-token-estimate.js"
 import { RULES_MANIFEST } from "./generated/manifest.js"
@@ -21,7 +21,7 @@ export type RuleCategory = "structure" | "cost" | "security" | "quality" | "conv
  * Metadata-only descriptor for a rule, exported before implementation.
  * Phase 0 ships one descriptor per declared rule so the manifest is a
  * complete artifact; Phase 3 fills in the `check` function. Both phases
- * re-export the same shape via `@promptlint/types`'s `RuleDefinition`.
+ * re-export the same shape via `@prompt-lint/types`'s `RuleDefinition`.
  */
 export type RuleManifestEntry = {
   readonly id: string

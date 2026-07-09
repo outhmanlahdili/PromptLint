@@ -1,4 +1,4 @@
-import type { SourceLocation } from "@promptlint/types"
+import type { SourceLocation } from "@prompt-lint/types"
 
 export interface YamlParseResult {
   readonly value: Readonly<Record<string, unknown>>

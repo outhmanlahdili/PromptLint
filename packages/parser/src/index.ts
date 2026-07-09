@@ -1,4 +1,4 @@
-import type { PromptFile, PromptFormat, SourceLocation } from "@promptlint/types"
+import type { PromptFile, PromptFormat, SourceLocation } from "@prompt-lint/types"
 
 export interface RawPromptInput {
   readonly path: string
@@ -29,7 +29,7 @@ export { parsePrompt, createParser } from "./dispatch.js"
 export { parseMarkdownPrompt } from "./markdown.js"
 export { extractFrontmatter, splitFrontmatter, promptFrontmatterSchema } from "./frontmatter.js"
 export { scanVariables, collectVariables } from "./variables.js"
-export type { VariableOccurrence } from "@promptlint/types"
+export type { VariableOccurrence } from "@prompt-lint/types"
 export { computeContentHash } from "./hash.js"
 export type { ContentHashInput } from "./hash.js"
 export { parseYaml } from "./yaml.js"

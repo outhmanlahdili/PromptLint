@@ -1,7 +1,7 @@
 import type { Dirent } from "node:fs"
 import { readdir, stat } from "node:fs/promises"
 import path from "node:path"
-import type { PromptFormat } from "@promptlint/types"
+import type { PromptFormat } from "@prompt-lint/types"
 
 /**
  * A prompt file located on disk, paired with the format the parser
@@ -41,12 +41,12 @@ export interface DiscoveryResult {
  * file. Returning `true` drops the file from the result.
  *
  * The matcher is built once from the user's `config.ignore` glob array
- * (see `@promptlint/config`). The CLI passes `undefined` (no user
+ * (see `@prompt-lint/config`). The CLI passes `undefined` (no user
  * config, no additional filtering) or a matcher compiled from the
  * config.
  *
  * The matcher must handle forward-slash and back-slash paths so it
- * works across platforms; the implementation in `@promptlint/config`
+ * works across platforms; the implementation in `@prompt-lint/config`
  * already normalizes to forward slashes internally.
  */
 export type IgnoreMatcher = ((absolutePath: string) => boolean) | undefined

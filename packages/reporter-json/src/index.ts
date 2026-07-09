@@ -1,4 +1,4 @@
-import type { Finding } from "@promptlint/types"
+import type { Finding } from "@prompt-lint/types"
 
 /**
  * Stable, versioned JSON output. The JSON shape is part of the V1

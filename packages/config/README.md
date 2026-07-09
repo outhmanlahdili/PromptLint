@@ -1,4 +1,4 @@
-# @promptlint/config
+# @prompt-lint/config
 
 Configuration loader for `promptlint.config.{ts,json}`.
 
@@ -24,7 +24,7 @@ for:
 ## Quick start
 
 ```ts
-import { loadConfig } from "@promptlint/config"
+import { loadConfig } from "@prompt-lint/config"
 
 const { config, filePath } = await loadConfig(process.cwd())
 console.log(config.failOn, config.format, config.ignore, config.rules)

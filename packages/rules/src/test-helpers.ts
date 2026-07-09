@@ -1,6 +1,6 @@
-import { collectVariables, scanVariables } from "@promptlint/parser"
-import { makePromptFile } from "@promptlint/test-utils"
-import type { Finding, PromptFile, RuleContext } from "@promptlint/types"
+import { collectVariables, scanVariables } from "@prompt-lint/parser"
+import { makePromptFile } from "@prompt-lint/test-utils"
+import type { Finding, PromptFile, RuleContext } from "@prompt-lint/types"
 
 /**
  * Construct a `RuleContext` for a single rule call.
@@ -27,7 +27,7 @@ export function makeContext(
  * Run a rule synchronously and return its emitted findings together with
  * any findings the rule returned from `check`.
  *
- * Variables in the body are extracted via `@promptlint/parser` so the
+ * Variables in the body are extracted via `@prompt-lint/parser` so the
  * tests do not have to enumerate each `{{ var }}` reference manually.
  */
 export async function runRule(

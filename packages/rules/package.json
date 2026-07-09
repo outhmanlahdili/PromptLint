@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/rules",
+  "name": "@prompt-lint/rules",
   "version": "1.0.0",
   "description": "Built-in lint rules for PromptLint V1.",
   "license": "MIT",
@@ -23,14 +23,14 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/parser": "workspace:*",
-    "@promptlint/rule-engine": "workspace:*",
-    "@promptlint/types": "workspace:*"
+    "@prompt-lint/parser": "workspace:*",
+    "@prompt-lint/rule-engine": "workspace:*",
+    "@prompt-lint/types": "workspace:*"
   },
   "devDependencies": {
-    "@promptlint/biome-config": "workspace:*",
-    "@promptlint/test-utils": "workspace:*",
-    "@promptlint/tsconfig": "workspace:*",
+    "@prompt-lint/biome-config": "workspace:*",
+    "@prompt-lint/test-utils": "workspace:*",
+    "@prompt-lint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

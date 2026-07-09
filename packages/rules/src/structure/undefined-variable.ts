@@ -1,5 +1,5 @@
-import { defineRule } from "@promptlint/rule-engine"
-import type { RuleDefinition } from "@promptlint/types"
+import { defineRule } from "@prompt-lint/rule-engine"
+import type { RuleDefinition } from "@prompt-lint/types"
 import { collectBodyVariables, collectDeclaredVariables } from "../helpers/index.js"
 
 /**

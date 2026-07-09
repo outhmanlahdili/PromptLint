@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/cli",
+  "name": "@prompt-lint/cli",
   "version": "1.0.0",
   "description": "PromptLint command-line interface. Lint your prompts. Catch regressions before your users do.",
   "license": "MIT",
@@ -26,18 +26,18 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/config": "workspace:*",
-    "@promptlint/parser": "workspace:*",
-    "@promptlint/reporter-human": "workspace:*",
-    "@promptlint/reporter-json": "workspace:*",
-    "@promptlint/rule-engine": "workspace:*",
-    "@promptlint/rules": "workspace:*",
-    "@promptlint/types": "workspace:*",
+    "@prompt-lint/config": "workspace:*",
+    "@prompt-lint/parser": "workspace:*",
+    "@prompt-lint/reporter-human": "workspace:*",
+    "@prompt-lint/reporter-json": "workspace:*",
+    "@prompt-lint/rule-engine": "workspace:*",
+    "@prompt-lint/rules": "workspace:*",
+    "@prompt-lint/types": "workspace:*",
     "tsx": "4.19.2"
   },
   "devDependencies": {
-    "@promptlint/biome-config": "workspace:*",
-    "@promptlint/tsconfig": "workspace:*",
+    "@prompt-lint/biome-config": "workspace:*",
+    "@prompt-lint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

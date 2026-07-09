@@ -1,5 +1,5 @@
 {
-  "extends": "@promptlint/tsconfig/build.json",
+  "extends": "@prompt-lint/tsconfig/build.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",

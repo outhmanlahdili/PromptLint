@@ -1,5 +1,10 @@
 import { createHash } from "node:crypto"
-import type { PromptFile, PromptFormat, PromptFrontmatter, SourceLocation } from "@promptlint/types"
+import type {
+  PromptFile,
+  PromptFormat,
+  PromptFrontmatter,
+  SourceLocation,
+} from "@prompt-lint/types"
 
 /**
  * Build a deterministic `PromptFile` for tests. The `contentHash` is

@@ -9,7 +9,7 @@ import { ExitCode } from "./types.js"
  * End-to-end tests for the CLI's configuration integration.
  *
  * These tests rely on `process.chdir()` to control the cwd that
- * `@promptlint/config`'s `loadConfig` uses for lookup. Each test resets
+ * `@prompt-lint/config`'s `loadConfig` uses for lookup. Each test resets
  * the cwd back to the original value in `afterEach` so subsequent
  * tests, other suites, and the host test runner are not affected.
  *

@@ -1,4 +1,4 @@
-# @promptlint/cli
+# @prompt-lint/cli
 
 ## 1.1.0
 

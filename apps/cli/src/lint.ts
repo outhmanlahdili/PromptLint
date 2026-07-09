@@ -5,12 +5,12 @@ import {
   createIgnoreMatcher,
   loadConfig,
   resolveRulesAgainstManifest,
-} from "@promptlint/config"
-import { parsePrompt } from "@promptlint/parser"
-import { runEngine } from "@promptlint/rule-engine"
-import { RULES_MANIFEST, getImplementedRules } from "@promptlint/rules"
-import type { Finding, PromptFile, Severity } from "@promptlint/types"
-import { SEVERITY_WEIGHT } from "@promptlint/types"
+} from "@prompt-lint/config"
+import { parsePrompt } from "@prompt-lint/parser"
+import { runEngine } from "@prompt-lint/rule-engine"
+import { RULES_MANIFEST, getImplementedRules } from "@prompt-lint/rules"
+import type { Finding, PromptFile, Severity } from "@prompt-lint/types"
+import { SEVERITY_WEIGHT } from "@prompt-lint/types"
 import { discoverPrompts } from "./discover.js"
 import type { DiscoveredPrompt } from "./discover.js"
 import { renderReport } from "./reporter.js"
@@ -73,7 +73,7 @@ export async function lint(targetPath: string, options: ResolvedOptions): Promis
     return fatal(options, err instanceof Error ? err.message : String(err))
   }
 
-  // The merged config from `@promptlint/config` always populates
+  // The merged config from `@prompt-lint/config` always populates
   // `ignore` (with the default when the user omits it), but Zod's
   // `.optional()` produces a `string[] | undefined` output type. The
   // runtime shape is guaranteed non-undefined by {@link mergeConfig}, so

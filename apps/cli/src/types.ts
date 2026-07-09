@@ -1,4 +1,4 @@
-import type { Severity } from "@promptlint/types"
+import type { Severity } from "@prompt-lint/types"
 
 /**
  * Output format selected by `--format`. The CLI translates the string

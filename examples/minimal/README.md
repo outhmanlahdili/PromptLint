@@ -1,4 +1,4 @@
-# @promptlint/minimal-example
+# @prompt-lint/minimal-example
 
 A minimal PromptLint project used by tests and documentation.
 

@@ -1,11 +1,11 @@
-# @promptlint/rule-engine
+# @prompt-lint/rule-engine
 
 Rule engine for PromptLint V1.
 
 ## Purpose
 
-The engine is the seam between **parsed prompt files** (`@promptlint/parser`)
-and **lint rules** (`@promptlint/rules`). It owns:
+The engine is the seam between **parsed prompt files** (`@prompt-lint/parser`)
+and **lint rules** (`@prompt-lint/rules`). It owns:
 
 - Rule registration (via the `EngineOptions.rules` array).
 - Rule execution: fan-out across files, awaiting async rule checks.
@@ -27,7 +27,7 @@ import {
   defineRule,       // factory that freezes a RuleDefinition
   resolveSeverity,  // apply ruleSeverity overrides
   declaredOptions,  // introspect a rule's declared RuleOption list
-} from "@promptlint/rule-engine"
+} from "@prompt-lint/rule-engine"
 ```
 
 ### `EngineOptions`

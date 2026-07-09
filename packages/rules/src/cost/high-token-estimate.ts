@@ -1,5 +1,5 @@
-import { defineRule } from "@promptlint/rule-engine"
-import type { Finding, RuleDefinition, RuleOption } from "@promptlint/types"
+import { defineRule } from "@prompt-lint/rule-engine"
+import type { Finding, RuleDefinition, RuleOption } from "@prompt-lint/types"
 import { estimateTokens } from "../helpers/index.js"
 
 /**

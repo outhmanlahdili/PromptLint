@@ -10,35 +10,35 @@ Phase 0 establishes the foundational contracts for PromptLint V1 without impleme
 
 ### Phase 0 deliverables
 
-- `@promptlint/types`
+- `@prompt-lint/types`
   - Shared type model for prompt files, findings, rules, rule options, and parser results.
   - Immutable data shapes for the public contract.
 
-- `@promptlint/parser`
+- `@prompt-lint/parser`
   - Parser input/output contracts (`RawPromptInput`, `ParseResult`, `ParseError`).
   - Parser interface (`PromptParser`).
   - Path normalization helper (`derivePromptId`).
 
-- `@promptlint/rule-engine`
+- `@prompt-lint/rule-engine`
   - Engine input/output shapes (`EngineOptions`, `EngineResult`, `EngineStats`).
   - Severity override behavior helpers (`resolveSeverity`, `declaredOptions`).
 
-- `@promptlint/rules`
+- `@prompt-lint/rules`
   - Immutable `RULES_MANIFEST` catalog of the ten declared V1 rules.
   - Rule metadata only; `check` implementations are not part of Phase 0.
 
-- `@promptlint/config`
+- `@prompt-lint/config`
   - Zod schema for `promptlint.config.json`.
   - Default configuration values.
 
-- `@promptlint/reporter-human`
+- `@prompt-lint/reporter-human`
   - Pure formatter contract for rendering findings to text.
   - `SEVERITY_GLYPH` lookup.
 
-- `@promptlint/reporter-json`
+- `@prompt-lint/reporter-json`
   - Deterministic JSON reporter contract, payload schema, and serializer.
 
-- `@promptlint/test-utils`
+- `@prompt-lint/test-utils`
   - Helper for building deterministic `PromptFile` test fixtures.
 
 - **Scaffolding & Infrastructure**
@@ -60,7 +60,7 @@ The workspace is organized as a monorepo with these package groups:
 ## Phase 0 process summary
 
 1. Identify the V1 contract boundaries from the product requirements and PRD.
-2. Define stable public types and interfaces in `@promptlint/types`.
+2. Define stable public types and interfaces in `@prompt-lint/types`.
 3. Create package-level exports that expose Phase 0 artifacts without runtime implementations.
 4. Write package README documentation that clearly describes what Phase 0 ships and what later phases will complete.
 5. Add tests that verify the contract behavior and metadata consistency.

@@ -1,4 +1,4 @@
-import type { Severity } from "@promptlint/types"
+import type { Severity } from "@prompt-lint/types"
 import type { PromptlintConfig, RuleConfig } from "./schema.ts"
 
 /**
@@ -49,7 +49,7 @@ export function resolveRules(
 
 /**
  * Convenience: resolve rules against the rule ids in a manifest array
- * (e.g. `RULES_MANIFEST` from `@promptlint/rules`).
+ * (e.g. `RULES_MANIFEST` from `@prompt-lint/rules`).
  *
  * `manifest` is intentionally typed as `readonly { id: string }[]` so
  * the config package depends only on the structural shape and never on

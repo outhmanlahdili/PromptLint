@@ -1,4 +1,4 @@
-import type { SourceLocation } from "@promptlint/types"
+import type { SourceLocation } from "@prompt-lint/types"
 
 /**
  * Lightweight regex utilities used by security and quality rules. Each
@@ -6,7 +6,7 @@ import type { SourceLocation } from "@promptlint/types"
  * resulting locations accurate.
  *
  * Source-location computation uses the same 1-indexed line/column
- * convention as `@promptlint/parser`.
+ * convention as `@prompt-lint/parser`.
  */
 
 export interface RegexMatch {
@@ -80,7 +80,7 @@ export function findAllMatches(regex: RegExp, body: string): readonly RegexMatch
  *
  * If `body` ends with a newline at `end`, the returned `endColumn` is
  * `1` — the start of the next line — to match the LSP convention used
- * by `@promptlint/parser`.
+ * by `@prompt-lint/parser`.
  */
 export function locationForRange(body: string, start: number, end: number): SourceLocation {
   const before = body.slice(0, start)

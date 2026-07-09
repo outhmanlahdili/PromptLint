@@ -1,4 +1,4 @@
-import type { Finding } from "@promptlint/types"
+import type { Finding } from "@prompt-lint/types"
 import { describe, expect, it } from "vitest"
 import { SEVERITY_GLYPH, formatFindingsForHuman } from "./index.ts"
 

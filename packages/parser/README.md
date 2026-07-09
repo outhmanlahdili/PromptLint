@@ -1,4 +1,4 @@
-# @promptlint/parser
+# @prompt-lint/parser
 
 Parsers for `.prompt.md`, `.prompt.ts`, and `.prompt.json` prompt files.
 
@@ -32,7 +32,7 @@ import {
   collectVariables,
   computeContentHash,
   parseYaml,
-} from "@promptlint/parser";
+} from "@prompt-lint/parser";
 ```
 
 - `parsePrompt(input: RawPromptInput): ParseResult` — format-aware
@@ -76,5 +76,5 @@ import {
 ### Architecture boundary
 
 The parser is intentionally pure: no I/O, no rule logic, no
-configuration loading. All of those live in `@promptlint/rule-engine`
-and `@promptlint/config` (Phase 2+).
+configuration loading. All of those live in `@prompt-lint/rule-engine`
+and `@prompt-lint/config` (Phase 2+).

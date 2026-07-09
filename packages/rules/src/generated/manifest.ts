@@ -1,4 +1,4 @@
-import type { RuleOption, Severity } from "@promptlint/types"
+import type { RuleOption, Severity } from "@prompt-lint/types"
 
 export interface RuleManifestEntry {
   readonly id: string

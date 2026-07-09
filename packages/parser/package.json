@@ -1,5 +1,5 @@
 {
-  "name": "@promptlint/parser",
+  "name": "@prompt-lint/parser",
   "version": "1.0.0",
   "description": "Parsers for `.prompt.md`, `.prompt.ts`, and `.prompt.json` prompt files.",
   "license": "MIT",
@@ -23,12 +23,12 @@
     "topo": "echo \"topo\""
   },
   "dependencies": {
-    "@promptlint/types": "workspace:*",
+    "@prompt-lint/types": "workspace:*",
     "zod": "3.24.1"
   },
   "devDependencies": {
-    "@promptlint/biome-config": "workspace:*",
-    "@promptlint/tsconfig": "workspace:*",
+    "@prompt-lint/biome-config": "workspace:*",
+    "@prompt-lint/tsconfig": "workspace:*",
     "@types/node": "20.17.10",
     "typescript": "5.7.2",
     "vitest": "2.1.8"

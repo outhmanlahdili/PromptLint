@@ -1,11 +1,11 @@
-import type { PromptFile, SourceLocation } from "@promptlint/types"
+import type { PromptFile, SourceLocation } from "@prompt-lint/types"
 
 /**
  * Variable inspection helpers used by the `structure/unused-variable` and
  * `structure/undefined-variable` rules.
  *
  * The parser already produces `{ name, locations }` groups via
- * `@promptlint/parser`. We re-expose the underlying data here in stable
+ * `@prompt-lint/parser`. We re-expose the underlying data here in stable
  * helpers so rule implementations do not have to touch the parser types
  * directly.
  */

@@ -1,10 +1,10 @@
-# @promptlint/cli
+# @prompt-lint/cli
 
 PromptLint command-line interface. Lint your prompts. Catch regressions
 before your users do.
 
 The CLI wires the full PromptLint pipeline end-to-end (file discovery →
-parsing → rule engine → reporting) and consumes `@promptlint/config`
+parsing → rule engine → reporting) and consumes `@prompt-lint/config`
 for the user's resolved configuration. Configuration influences
 `failOn`, `format`, `ignore` patterns, and per-rule severity plus
 options; command-line flags always take precedence over the config.
@@ -63,7 +63,7 @@ node --import <absolute-path-to-apps/cli/node_modules/tsx/dist/loader.mjs>
 
 The CLI does not register a `node_modules/.bin/promptlint` shim during
 a workspace `pnpm install`. Use the `pnpm promptlint ...` root script;
-calling `tsx` directly via `pnpm --filter @promptlint/cli exec tsx …`
+calling `tsx` directly via `pnpm --filter @prompt-lint/cli exec tsx …`
 is unsupported because it depends on pnpm's `.bin` link policy and is
 not part of the documented developer workflow.
 
@@ -205,7 +205,7 @@ The orchestration layer is exported from `src/index.ts` so host
 applications can drive the pipeline in-process:
 
 ```ts
-import { runCli } from "@promptlint/cli"
+import { runCli } from "@prompt-lint/cli"
 const result = await runCli(["check", "prompts/"], import.meta.url)
 // result.exitCode, result.stdout, result.stderr
 ```

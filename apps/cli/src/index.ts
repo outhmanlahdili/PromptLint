@@ -1,5 +1,5 @@
 /**
- * Public surface of `@promptlint/cli`.
+ * Public surface of `@prompt-lint/cli`.
  *
  * The orchestration layer (discovery, parsing, engine wiring, exit-code
  * computation) is exported so host applications and tests can drive the

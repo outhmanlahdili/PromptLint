@@ -40,9 +40,9 @@ Every workspace package follows the same conventions:
 
 - `package.json` exposes `lint`, `lint:fix`, `typecheck`, `test`,
   `test:run`, `build`, `clean`, and `topo` scripts.
-- `tsconfig.json` extends `@promptlint/tsconfig/base.json`.
-- `tsconfig.build.json` extends `@promptlint/tsconfig/build.json`.
-- `biome.json` extends `@promptlint/biome-config/biome.json`.
+- `tsconfig.json` extends `@prompt-lint/tsconfig/base.json`.
+- `tsconfig.build.json` extends `@prompt-lint/tsconfig/build.json`.
+- `biome.json` extends `@prompt-lint/biome-config/biome.json`.
 - `vitest.config.ts` configures Vitest for Node.
 
 ## Development workflow
